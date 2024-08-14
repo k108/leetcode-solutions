@@ -1,25 +1,27 @@
 class Solution:
     def threeSum(self, nums: List[int]) -> List[List[int]]:
-        nums.sort()
         result = []
-        target = 0
-        for i in range(0, len(nums)):
-            # skip duplicates
-            if i>0 and nums[i] == nums[i-1]:
+        N = len(nums)
+        nums.sort()
+        
+        for i in range(N):
+            if i>0 and nums[i]==nums[i-1]:
                 continue
-
-            left=i+1
-            right=len(nums)-1
+            left = i+1
+            right = N-1
             while left < right:
-                if nums[left]+nums[right]<target - nums[i]:
+                estimate = nums[i]+nums[left]+nums[right]
+
+                if estimate < 0:
                     left+=1
-                elif nums[left]+nums[right]>target - nums[i]:
+                elif estimate > 0:
                     right-=1
                 else:
-                    result.append([nums[i], nums[left], nums[right]])
-                    # skip duplicates
+                    result.append([nums[i],nums[left],nums[right]])
                     left+=1
+
                     while left < right and nums[left]==nums[left-1]:
                         left+=1
+        
         return result
 
