@@ -1,19 +1,20 @@
 class Solution:
     def isValid(self, s: str) -> bool:
+        mapping = {'(' : ')', '{' : '}', '[' : ']'}
         stack = []
-        paranthesis_mapping = {'(':')', '{':'}', '[':']'}
-        for symbol in s:
-            if symbol in ['(', '{', '[']:
-                stack.append(symbol)
+        for c in s:
+            if c in '({[':
+                stack.append(c)
             else:
-                if stack == []:
-                    return False
-                else:
-                    top_symbol = stack.pop()
-                    if paranthesis_mapping[top_symbol] != symbol:
+                if stack:
+                    top_element = stack.pop()
+                    if mapping[top_element] == c:
+                        continue
+                    else:
                         return False
-        if stack == []:
-            return True
-        else:
-            return False
+                else:
+                    return False
+
+        return True if not stack else False
+
         
