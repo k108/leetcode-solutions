@@ -1,28 +1,32 @@
 class Solution:
     def permute(self, nums: List[int]) -> List[List[int]]:
+        '''
+        Time Complexity : O(n! * n^2)
+        Space Complexity : O(n! * n)
+        ''' 
 
-        def dfs(path, used):
-            if len(path) == len(nums):
-                res.append(path.copy())
-                return
+        if len(nums) == 0:
+            return [[]]
 
-            for i, digit in enumerate(nums):
-                # skip used letters
-                if used[i]:
-                    continue
+        perms = self.permute(nums[1:])
+        result = []
+        for p in perms:
+            for i in range(len(p)+1):
+                p_copy = p.copy()
+                p_copy.insert(i, nums[0])
+                result.append(p_copy)
 
-                # add letter to permutation, mark letter as used
-                path.append(digit)
-                used[i] = True
-                dfs(path, used)
+        return result
 
-                # remove letter from permutation, mark letter as unused
-                path.pop()
-                used[i] = False
+        for n in nums:
+            new_perms = []
+            for p in perms:
+                for i in range(len(p)+1):
+                    p_copy = p.copy()
+                    p_copy.insert(i, n)
+                    new_perms.append(p_copy)
 
-        res = []
-        dfs([], [False]*len(nums))
-        return res
-
-
+            perms = new_perms
+        return perms    
+        
         
