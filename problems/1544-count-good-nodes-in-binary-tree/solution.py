@@ -6,21 +6,19 @@
 #         self.right = right
 class Solution:
     def goodNodes(self, root: TreeNode) -> int:
-        # Use DFS (Depth First Search) to traverse the tree, 
-        # and constantly keep track of the current path maximum.
-        self.s=0
-        def dfs(root, path_max):
-            if not root:
+        self.good_nodes_count = 0
+        def dfs(current_node, current_max):
+            if not current_node:
                 return
-            path_max = max(path_max, root.val)
-
-            if root.val >= path_max:
-                self.s += 1
-
-            dfs(root.left, path_max)
-            dfs(root.right, path_max)
-        dfs(root, -(2^1000000000))
-        return self.s
             
+            if current_node.val >= current_max:
+                current_max = current_node.val
+                self.good_nodes_count+=1
+            
+            dfs(current_node.left, current_max)
+            dfs(current_node.right, current_max)
+        
+        dfs(root, -(2^1000000000))
+        return self.good_nodes_count
 
         
