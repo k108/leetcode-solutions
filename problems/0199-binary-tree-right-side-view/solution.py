@@ -6,30 +6,31 @@
 #         self.right = right
 class Solution:
     def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
-        result = []
-        depth = 0
-        def bfs(root):
-            if root == None:
-                return
-            
-            queue = []
-            queue.append(root)
-            
-            while(queue):
-                for _ in range(len(queue)):
-                    root = queue[0]
-                    queue.pop(0)
-                    
-                    if root.left:
-                        queue.append(root.left)
-                        
-                    if root.right:
-                        queue.append(root.right)
-                result.append(root.val)
-            
-            return result
+        # After traversing each level we find the right most node 
+        # and collect its value in the result list.
 
-        return bfs(root)
+        result = []
+        if root == None:
+            return []
         
+        queue = []
+        queue.append(root)
+        
+        while(len(queue)):
+            for _ in range(len(queue)):
+                node = queue[0]
+                queue.pop(0)
+                
+                if node.left:
+                    queue.append(node.left)
+                    
+                if node.right:
+                    queue.append(node.right)
+
+            result.append(node.val)
+
+        return result
+
+
 
         
