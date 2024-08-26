@@ -6,16 +6,18 @@
 #         self.right = right
 class Solution:
     def isValidBST(self, root: Optional[TreeNode]) -> bool:
-        self.prev = float('-infinity')
-        def inorder(root):
+        # root.left < root < root.right
+        # negative infinity < root < infinity
+        def dfs(root, min_val, max_val):
             if not root:
                 return True
 
-            if not (inorder(root.left) and self.prev < root.val):
+            if root.val<=min_val or root.val>=max_val:
                 return False
-            self.prev = root.val
-            return inorder(root.right)
-        return inorder(root)
+            
+            return dfs(root.left, min_val, root.val) and dfs(root.right, root.val, max_val)
+            
+        return dfs(root, float("-infinity"), float("infinity"))
 
 
         
