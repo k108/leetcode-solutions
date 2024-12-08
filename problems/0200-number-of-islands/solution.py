@@ -2,30 +2,33 @@ class Solution:
     def numIslands(self, grid: List[List[str]]) -> int:
         if not grid:
             return 0
-
-        rows=len(grid)
-        cols=len(grid[0])
+            
+        ROWS = len(grid)
+        COLUMNS = len(grid[0])
         visited = set()
         islands = 0
 
-        def bfs(r, c):
-            queue = []
-            visited.add((r, c))
-            queue.append((r, c))
-            while queue:
-                row, col = queue.pop(0)
-                directions = [[1,0], [-1, 0], [0, 1], [0, -1]]
-                for dr, dc in directions:
-                    r, c = row+dr, col+dc
-                    if (0<=r<rows) and (0<=c<cols) and grid[r][c]=="1" and (r,c) not in visited:
-                        queue.append((r, c))
-                        visited.add((r, c))
+        def dfs(r, c):
 
-        for r in range(rows):
-            for c in range(cols):
+            if 0<=r+1<ROWS and 0<=c<COLUMNS and (r+1,c) not in visited and grid[r+1][c]=="1":
+                visited.add((r+1,c))
+                dfs(r+1, c)
+            if 0<=r-1<ROWS and 0<=c<COLUMNS and (r-1,c) not in visited and grid[r-1][c]=="1":
+                visited.add((r-1,c))
+                dfs(r-1, c)
+            if 0<=r<ROWS and 0<=c+1<COLUMNS and(r,c+1) not in visited and grid[r][c+1]=="1":
+                visited.add((r,c+1))
+                dfs(r, c+1)
+            if 0<=r<ROWS and 0<=c-1<COLUMNS and (r,c-1) not in visited and grid[r][c-1]=="1":
+                visited.add((r,c-1))
+                dfs(r, c-1)
+
+        for r in range(ROWS):
+            for c in range(COLUMNS):
                 if grid[r][c]=="1" and (r,c) not in visited:
-                    bfs(r, c)
+                    visited.add((r,c))
+                    dfs(r, c)
                     islands+=1
 
         return islands
-
+        
