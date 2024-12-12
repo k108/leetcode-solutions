@@ -2,38 +2,49 @@ from collections import deque
 
 class Solution:
     def orangesRotting(self, grid: List[List[int]]) -> int:
-        ROWS = len(grid)
-        COLS = len(grid[0])
-        time = 0
-        fresh_count = 0
+        '''
+        Time Complexity = O(n*m)
+        Space Complexity = O(n*m), for queue
+        '''
 
-        dequeue = deque()
-        
+        # We use multi-source BFS here
+        ROWS=len(grid)
+        COLS=len(grid[0])
+        minutes = 0
+        queue = deque()
+        fresh_oranges_count = 0
         for r in range(ROWS):
             for c in range(COLS):
-                if grid[r][c]==2:
-                    dequeue.append((r,c))
                 if grid[r][c]==1:
-                    fresh_count+=1
+                    fresh_oranges_count+=1
+                elif grid[r][c]==2:
+                    queue.append((r,c))
 
-        while dequeue and fresh_count>0:
-            time+=1
-            # for each level
-            for _ in range(len(dequeue)):
-                i, j = dequeue.popleft()
+        while queue and fresh_oranges_count>0:
+            # pop all the rotting oranges in the queue
+            # although we are appending rotting oranges to the queue
+            # range(len(queue)) is executed once and not at every iteration of the for loop
+            # so we are doing multi-source BFS here
+            # we are traversing each level from multiple start nodes
+            for i in range(len(queue)):
+                r, c = queue.popleft()
 
-                for r, c in [(i+1, j), (i, j+1), (i-1, j), (i, j-1)]:
-                    if (r>=0 and r<ROWS) and (c>=0 and c<COLS) and grid[r][c]==1:
-                        grid[r][c]=2
-                        fresh_count-=1
-                        dequeue.append((r,c))
+                neighbors = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+                for dr, dc in neighbors:
+                    # if in bounds and fresh, make rotten
+                    if (min(r + dr, c + dc) >= 0 and
+                        r + dr < ROWS and c + dc < COLS and
+                        grid[r + dr][c + dc] == 1):
+                        grid[r + dr][c + dc] = 2
+                        fresh_oranges_count-=1
+                        queue.append((r + dr, c + dc))
 
-        if fresh_count > 0:
+            minutes += 1
+
+        if fresh_oranges_count>0:
             return -1
 
-        return time
-
-
+        return minutes
 
 
         
