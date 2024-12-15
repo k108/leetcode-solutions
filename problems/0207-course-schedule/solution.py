@@ -1,34 +1,41 @@
 class Solution:
     def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
-        # crs -> pre mapping
-        adj = {i:[] for i in range(numCourses)}
+        adjList = {}
+        visit = set()
+        path = set()
+        # topological_sort = []
 
         for crs, pre in prerequisites:
-            adj[crs].append(pre)
+            if crs not in adjList:
+                adjList[crs] = []
+            if pre not in adjList:
+                adjList[pre] = []
+            adjList[crs].append(pre)
 
-        visited = set()
-        
-        def dfs(crs):
-            if crs in visited:
+        def dfs(node):
+            # # base case of crs with no pre
+            # if adjList[node] == []:
+            #     return True
+            if node in path:
                 return False
-            # base case of crs with not pre
-            if adj[crs] == []:
+            if node in visit:
                 return True
 
-            visited.add(crs)
-            for pre in adj[crs]:
-                if not dfs(pre):
+            visit.add(node)
+            path.add(node)
+
+            for neighbor in adjList[node]:
+                if not dfs(neighbor):
                     return False
 
-            visited.remove(crs)
-            adj[crs] = []
+            # topological_sort.append(node)
+            path.remove(node)
 
             return True
 
-        # To handle the case if graph in not connected
-        # 1->2, 3->4
-        for crs in range(numCourses):
-            if not dfs(crs) : return False
-    
+        for crs, pre in prerequisites:
+            if not dfs(crs):
+                return False
+
         return True
 
