@@ -16,11 +16,9 @@ class Solution:
         # stores maximum sum ending here
         curr_sum = 0
 
-        for n in nums:
-            curr_sum+=n
+        for num in nums:
+            if curr_sum < 0:
+                curr_sum = 0
+            curr_sum += num
             max_sum = max(max_sum, curr_sum)
-            curr_sum = max(curr_sum, 0)
-
         return max_sum
-
-        
