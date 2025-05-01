@@ -1,9 +1,9 @@
 class Solution:
 
-    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+    def insert(self, intervals: List[List[int]], new_interval: List[int]) -> List[List[int]]:
         '''
-        Time Complexity : O(n)
-        Space Complexity : O(n)
+        Time Complexity : O(logn+logn+n)=O(n)
+        Space Complexity : O(1+1+n)=O(n)
         '''
 
         '''
@@ -15,23 +15,17 @@ class Solution:
         with the start of the new interval and vice versa.
         '''
 
-        merged = []
-        
-        for interval in intervals:
-            # if curr_interval_high < new_interval_low -> new_interval comes after
-            if interval[1] < newInterval[0]:
-                merged.append(interval)
+        # binary search the index si such that all intervals below si
+        # end before the start of new_interval
+        si = bisect.bisect_left(intervals, new_interval[0], key=lambda x: x[1])
 
-            # if curr_interval_low > new_interval_high -> new_interval comes before 
-            # we add the new interval and update it to the current one
-            elif interval[0] > newInterval[1]:
-                merged.append(newInterval)
-                newInterval = interval
+        # binary search the index ei such that all intervals above ei
+        # start after the end of new_interval
+        ei = bisect.bisect_right(intervals, new_interval[1], key=lambda x: x[0])
 
-            # if curr_interval_high >= new_interval_low 
-            # and curr_interval_low <= new_interval_high -> new_interval comes inside
-            elif interval[1] >= newInterval[0] and interval[0] <= newInterval[1]:
-                newInterval = [min(newInterval[0], interval[0]), max(newInterval[1], interval[1])]
+        # Merge all intervals between si and ei,
+        # by finding the minimum start and maximum end points
+        start = min(intervals[si][0], new_interval[0]) if si < len(intervals) else new_interval[0]
+        end = max(intervals[ei - 1][1], new_interval[1]) if ei > 0 else new_interval[1]
 
-        merged.append(newInterval)
-        return merged
+        return intervals[:si] + [[start, end]] + intervals[ei:]
