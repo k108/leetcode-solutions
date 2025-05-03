@@ -1,47 +1,34 @@
 class WordFilter:
     '''
     Approach :
-    We create  2 Maps. One, Maps each word to its index.
-    Another Maps (first_char, last_char) => list of words having that pattern;
-    a coarse filter to reduce search space.
-    Loop through words in reverse, it ensures that latest index is preserved.
-    First check if there are any candidate words with matching first and last characters.
-    Then for each candidate, verifies if the word actually matches the full prefix and suffix.
-    Returns the stored index from map (which is the latest due to reverse traversal).
+    We create 1 Map (prefix#suffix) => index;
+    Later occurrences of the prefix + suffix combo will have its weight overwritten,
+    so we can simply look up the dictionary and return the answer.
     '''
 
     def __init__(self, words: List[str]):
         '''
-        Time Complexity : O(N)
-        Space Complexity : O(N)
+        Time Complexity : O(N × L²)
+        Space Complexity : O(N × L²)
         '''
-        # w => idx
-        self.word_to_index = {}
-        # (first_char, last_char) => [w1, w2,..]
-        self.start_end_char_words = {}
+        # (prefix#suffix) => idx
+        self.combo_to_index = {}
 
-        for i in range(len(words)-1,-1,-1):
-            if (words[i][0],words[i][-1]) in self.start_end_char_words:
-                self.start_end_char_words[(words[i][0],words[i][-1])].append(words[i])
-            else:
-                self.start_end_char_words[(words[i][0],words[i][-1])] = [words[i]]
-
-            if words[i] not in self.word_to_index:
-                    self.word_to_index[words[i]]=i
+        for index, word in enumerate(words):
+            prefix = ''
+            for char in list(word):
+                prefix += char
+                suffix = ''
+                for char in list(word[::-1]):
+                    suffix += char
+                    self.combo_to_index[prefix + '#' + suffix[::-1]] = index
 
     def f(self, prefix: str, suffix: str) -> int:
         '''
-        O(K × L)
+        Time Complexity : O(1)
         '''
-
-        if (prefix[0],suffix[-1]) in self.start_end_char_words:
-            candidates=self.start_end_char_words[(prefix[0],suffix[-1])]
-            for candidate in candidates:
-                # for each candidate, verify
-                # if the word actually matches the full prefix and suffix
-                if candidate[:len(prefix)]==prefix and candidate[len(candidate)-len(suffix):]==suffix:
-                    return self.word_to_index[candidate]
-        return -1
+        return self.combo_to_index.get(prefix + '#' + suffix, -1)
+        
 
 
 # Your WordFilter object will be instantiated and called as such:
