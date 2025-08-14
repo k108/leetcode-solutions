@@ -7,19 +7,16 @@ class Solution:
         Space Complexity : O(n)
         '''
         '''
-        Approach : Binary Search + Sweep Line
+        Approach : TreeMap
         
-        Blooming flowers = started flowers - ended flowers
+        Stores key-value pairs in a sorted order (natural or custom) using a Red-Black Tree. 
+        And it ensures O(log n) time for insertion, deletion and Seaching.
         '''
 
-        start_times = []
-        end_times = []
-
+        diff = sortedcontainers.SortedDict({0: 0})
         for s, e in flowers:
-            start_times.append(s)
-            end_times.append(e)
+            diff[s] = diff.get(s, 0) + 1
+            diff[e + 1] =  diff.get(e + 1, 0) - 1
         
-        start_times = sorted(start_times)
-        end_times = sorted(end_times)
-
-        return [bisect_right(start_times, t) - bisect_left(end_times, t) for t in people]
+        count = list(accumulate(diff.values()))
+        return [count[diff.bisect(t) - 1] for t in people]
