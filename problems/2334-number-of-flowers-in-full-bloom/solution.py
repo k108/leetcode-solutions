@@ -3,20 +3,51 @@ from collections import defaultdict
 class Solution:
     def fullBloomFlowers(self, flowers: List[List[int]], people: List[int]) -> List[int]:
         '''
-        Time Complexity : O(nlogn + mlogn)
-        Space Complexity : O(n)
-        '''
-        '''
-        Approach : TreeMap
+        Time Complexity : O((n + m) * logn),
+        We first create two arrays of length n, starts and ends, then sort them. 
+        This costs O(n * log(n)).
         
-        Stores key-value pairs in a sorted order (natural or custom) using a Red-Black Tree. 
-        And it ensures O(log n) time for insertion, deletion and Seaching.
+        Next, we iterate over people and perform two binary searches at each iteration. 
+        This costs O(m * log(n)).
+
+        Space Complexity : O(n),
+        starts and ends both have a size of n
         '''
 
-        diff = sortedcontainers.SortedDict({0: 0})
-        for s, e in flowers:
-            diff[s] = diff.get(s, 0) + 1
-            diff[e + 1] =  diff.get(e + 1, 0) - 1
+        '''
+        At any given time, the number of flowers we see is the number of flowers 
+        that have already started blooming minus the amount of flowers have finished blooming.
+
+        We can simply collect all start points in one array starts, sort it, 
+        and then perform a binary search. We can do the exact same thing with 
+        another array ends for all end points.
+
+        Regarding the binary searches: when binary searching on starts, 
+        we want to search for the rightmost insertion index. This is because 
+        if a person arrives at the same time as a flower starts blooming, 
+        we want to include this flower. 
+
+        Note that a flower = [start, end] stops blooming at end + 1, not end. 
+        There are two ways we can handle this. We can either binary search on end 
+        for the leftmost insertion index (since we want to include all flowers with 
+        end equal to the current time), or we can assemble ends using end + 1 for each flower
+        '''
+
+        starts = []
+        ends = []
+
+        for start, end in flowers:
+            starts.append(start)
+            ends.append(end + 1)
         
-        count = list(accumulate(diff.values()))
-        return [count[diff.bisect(t) - 1] for t in people]
+        starts.sort()
+        ends.sort()
+
+        ans = []
+
+        for person in people:
+            i = bisect_right(starts, person)
+            j = bisect_right(ends, person)
+            ans.append(i - j)
+
+        return ans
