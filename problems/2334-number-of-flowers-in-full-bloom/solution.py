@@ -3,34 +3,24 @@ from collections import defaultdict
 class Solution:
     def fullBloomFlowers(self, flowers: List[List[int]], people: List[int]) -> List[int]:
         '''
-        Time Complexity : O((n + m) * logn),
-        We first create two arrays of length n, starts and ends, then sort them. 
-        This costs O(n * log(n)).
-        
-        Next, we iterate over people and perform two binary searches at each iteration. 
-        This costs O(m * log(n)).
+        Time Complexity : O(n log n) + O(m log m);
 
-        Space Complexity : O(n),
-        starts and ends both have a size of n
+        O(n) + O(n log n) + O(m log m) + O(n + m). 
+        The dominant terms are O(n log n) and O(m log m).
+
+        Space Complexity : O(n + m)
         '''
 
         '''
         At any given time, the number of flowers we see is the number of flowers 
         that have already started blooming minus the amount of flowers have finished blooming.
 
-        We can simply collect all start points in one array starts, sort it, 
-        and then perform a binary search. We can do the exact same thing with 
-        another array ends for all end points.
+        Count the number of flowers blooming at specific times for a list of people.
 
-        Regarding the binary searches: when binary searching on starts, 
-        we want to search for the rightmost insertion index. This is because 
-        if a person arrives at the same time as a flower starts blooming, 
-        we want to include this flower. 
-
-        Note that a flower = [start, end] stops blooming at end + 1, not end. 
-        There are two ways we can handle this. We can either binary search on end 
-        for the leftmost insertion index (since we want to include all flowers with 
-        end equal to the current time), or we can assemble ends using end + 1 for each flower
+        First separate the start and end times of all flower blooming periods, sorts them,
+        and then use a sweep-line algorithm. By iterating through the sorted people's 
+        arrival times, track the number of currently blooming flowers by incrementing
+        counter for each start time and decrementing it for each end time encountered.
         '''
 
         starts = []
@@ -38,16 +28,23 @@ class Solution:
 
         for start, end in flowers:
             starts.append(start)
-            ends.append(end + 1)
+            ends.append(end)
         
         starts.sort()
         ends.sort()
 
-        ans = []
+        ans = {}
+        i = j = curr = 0
 
-        for person in people:
-            i = bisect_right(starts, person)
-            j = bisect_right(ends, person)
-            ans.append(i - j)
-
-        return ans
+        for p in sorted(people):
+            while i < len(starts) and starts[i] <= p:
+                curr += 1
+                i += 1
+            
+            while j < len(ends) and ends[j] < p:
+                curr -= 1
+                j += 1
+            
+            ans[p] = curr
+        
+        return [ans[p] for p in people]
