@@ -1,10 +1,20 @@
 class Solution:
     def characterReplacement(self, s: str, k: int) -> int:
+        return self.approach_1(s, k)
+
+    def approach_2(self, s: str, k: int) -> int:
+        pass
+    
+    def approach_1(self, s: str, k: int) -> int:
         '''
         Time Complexity : O(n)
         Space Complexity : O(1)
         '''
         '''
+        Assume there is no constraints like the k,
+        Given a string convert it to a string with all same characters with minimal changes =
+        (length - max occurrence)
+        Apply the at most k changes constraint and maintain a sliding window,
         longest substring where (length - max occurrence) <= k
         '''
         L = len(s)
