@@ -1,6 +1,25 @@
 class Solution:
     def wordBreak(self, s: str, wordDict: List[str]) -> bool:
-        return self.approach_3(s, wordDict)
+        return self.approach_4(s, wordDict)
+
+    def approach_4(self, s: str, wordDict: List[str]) -> bool:
+        """
+        Time Complexity : O(N*M*K); N is the length of s, M is the length of wordDict, and 
+        M is the average length of the words in wordDict
+
+        Space Complexity : O(N), for dp array
+        """
+        N = len(s)
+        dp = [False] * (N + 1)
+        dp[0] = True
+        for i in range(1, N+1):
+            for word in wordDict:
+                cur_len = len(word)
+                if i >= cur_len:
+                    j = i-cur_len
+                    if dp[j] == True and word == s[j:i]:
+                        dp[i] = True
+        return dp[N]
 
     def approach_3(self, s: str, wordDict: List[str]) -> bool:
         """
