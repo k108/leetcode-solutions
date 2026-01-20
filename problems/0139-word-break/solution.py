@@ -1,6 +1,117 @@
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.end_of_word = False
+
+class Trie:
+
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word: str) -> None:
+        """
+        Time Complexity : O(W*L), where 
+        W is the number of words, and 
+        L is an average length of the word
+        """
+        current_node = self.root
+        for c in word:
+            if c not in current_node.children:
+                current_node.children[c] = TrieNode()
+            current_node = current_node.children[c]
+        current_node.end_of_word = True
+
+    def search(self, word: str) -> bool:
+        """
+        Time Complexity : O(W*L), where 
+        W is the number of words, and 
+        L is an average length of the word
+        """
+        current_node = self.root
+        for c in word:
+            if c not in current_node.children:
+                return False
+            current_node = current_node.children[c]
+        return current_node.end_of_word
+        
+
+    def startsWith(self, prefix: str) -> bool:
+        """
+        Time Complexity : O(W*L), where 
+        W is the number of words, and 
+        L is an average length of the word
+        """
+        current_node = self.root
+        for c in prefix:
+            if c not in current_node.children:
+                return False
+            current_node = current_node.children[c]
+        return True
+
 class Solution:
     def wordBreak(self, s: str, wordDict: List[str]) -> bool:
-        return self.approach_4(s, wordDict)
+        return self.approach_5(s, wordDict)
+
+    def approach_6(self, s: str, wordDict: List[str]) -> bool:
+        """
+        BFS
+        
+        """
+        pass
+
+    def approach_5(self, s: str, wordDict: List[str]) -> bool:
+        """
+        Time complexity: O(n^2 + m*k) or O(n*L + m*k)
+
+        Let:
+        n = length of string
+        m = number of words
+        k = average word length
+        L = maximum word length in dictionary
+        
+        Building the trie involves iterating over all characters of all words. This costs O(m*k).
+        
+        Once we build the trie, we calculate dp. For each i, we iterate over all the indices after i. 
+        We have a basic nested for loop which costs O(n^2) to handle all dp[i].
+
+        For each valid dp[i], we walk forward in the Trie. Trie walk stops after at most L characters.
+        Each character is processed once per start position.
+        
+        Space complexity: O(n + m*k)
+        
+        The dp array takes O(n) space. The trie can have up to m*k nodes in it.
+        """
+        """
+        Trie
+
+        dp[j] |= dp[i] AND (s[i:j] in wordDict)
+
+        """
+        trie = Trie()
+        for word in wordDict:
+            trie.insert(word)
+
+        N = len(s)
+        dp = [False] * (N + 1)
+        dp[0] = True
+        for i in range(0, N+1):
+            if dp[i]:
+                # Start at Trie root where dp[i] is True
+                curr = trie.root
+                for j in range(i, N):
+                    c = s[j]
+                    if c not in curr.children:
+                        # If the character is not a child in Trie -> stop
+                        # No words exist
+                        break
+                    
+                    curr = curr.children[c]
+                    # s[i:j) is a dictionary word
+                    # set dp[j] = True
+                    if curr.end_of_word:
+                        dp[j+1] = True
+
+        return dp[N]
 
     def approach_4(self, s: str, wordDict: List[str]) -> bool:
         """
