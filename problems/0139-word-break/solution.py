@@ -50,14 +50,44 @@ class Trie:
 
 class Solution:
     def wordBreak(self, s: str, wordDict: List[str]) -> bool:
-        return self.approach_5(s, wordDict)
+        return self.approach_6(s, wordDict)
 
     def approach_6(self, s: str, wordDict: List[str]) -> bool:
         """
-        BFS
+        Time Complexity : O(N^3) or O(N^2)
+        Each index processed once → O(N) states
+        From each index, try all j ≥ i → O(N)
+        Substring cost → O(N) (Python)
         
+        If substring slicing were O(1): O(N^2)
+
+        Space Complexity : O(N), Queue and visited set
         """
-        pass
+        """
+        Approach : BFS
+        """
+        N = len(s)
+        word_set = set(wordDict)
+        # start index positions to explore
+        queue = deque([0])
+        # avoid re-processing the same index
+        visited = set()
+
+        while queue:
+            start = queue.popleft()
+
+            if start == N:
+                return True
+
+            if start in visited:
+                continue
+            visited.add(start)
+
+            for end in range(start, N):
+                if s[start:end+1] in word_set:
+                    queue.append(end+1)
+
+        return False
 
     def approach_5(self, s: str, wordDict: List[str]) -> bool:
         """
@@ -82,7 +112,7 @@ class Solution:
         The dp array takes O(n) space. The trie can have up to m*k nodes in it.
         """
         """
-        Trie
+        Approach : Trie
 
         dp[j] |= dp[i] AND (s[i:j] in wordDict)
 
@@ -225,6 +255,9 @@ class Solution:
 
         Space Complexity : O(N), for dp array and recursion stack
         """
+        """
+        Approach : Memoization
+        """
         N = len(s)
         word_set = set(wordDict)
 
@@ -252,6 +285,9 @@ class Solution:
         or O(N^2 * 2^N), partition a string O(2^N) & substring O(N)
 
         Space Complexity : O(N), string length and call stack depth
+        """
+        """
+        Approach : DFS
         """
 
         N = len(s)
