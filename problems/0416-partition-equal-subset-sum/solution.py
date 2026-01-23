@@ -1,6 +1,100 @@
 class Solution:
     def canPartition(self, nums: List[int]) -> bool:
-        return self.approach_1(nums)
+        return self.approach_4(nums)
+
+    def approach_4(self, nums: List[int]) -> bool:
+        '''
+        Time Complexity: O(N * target_sum)
+        Space Complexity: O(N * target_sum)
+        '''
+        '''
+        Approach:
+        Memoization
+        '''
+        # For pruning
+        nums.sort()
+
+        total_sum = sum(nums)
+        if not total_sum % 2 == 0:
+            return False
+        
+        target_sum = total_sum // 2
+
+        def dfs(remaining, i, dp):
+            # Pruning
+            if i == len(nums) or remaining < nums[i]:
+                return False
+
+            if (remaining, i) in dp:
+                return dp[(remaining, i)]
+            
+            if remaining == nums[i]:
+                dp[(remaining, i)] = True
+                return dp[(remaining, i)]
+
+            # include current index or exclude it
+            dp[(remaining, i)] = dfs(remaining - nums[i], i+1, dp) or dfs(remaining, i+1, dp)
+            return dp[(remaining, i)]
+        
+        return dfs(target_sum, 0, {})
+
+    def approach_3(self, nums: List[int]) -> bool:
+        '''
+        Time Complexity: O(2^N), each element is include/exclude
+        Space Complexity: O(N), recursion stack
+        '''
+        '''
+        Approach:
+        Backtracking / DFS
+        '''
+        # For pruning
+        nums.sort()
+
+        total_sum = sum(nums)
+        if not total_sum % 2 == 0:
+            return False
+        
+        target_sum = total_sum // 2
+
+        def dfs(remaining, i):
+            # Pruning
+            if i == len(nums) or remaining < nums[i]:
+                return False
+            
+            if remaining == nums[i]:
+                return True
+
+            # include current index or exclude it
+            return dfs(remaining - nums[i], i+1) or dfs(remaining, i+1)
+        
+        return dfs(target_sum, 0)
+
+    def approach_2(self, nums: List[int]) -> bool:
+        '''
+        Time Complexity: O(2^N), each element is include/exclude
+        Space Complexity: O(N), recursion stack
+        '''
+        '''
+        Approach:
+        Backtracking / DFS
+        '''
+        total_sum = sum(nums)
+        if not total_sum % 2 == 0:
+            return False
+        
+        target_sum = total_sum // 2
+
+        def dfs(curr_sum, i):
+            if curr_sum == target_sum:
+                return True
+
+            if i == len(nums) or curr_sum > target_sum:
+                return False
+
+            # include current index or exclude it
+            return dfs(curr_sum + nums[i], i+1) or dfs(curr_sum, i+1)
+        
+        return dfs(0, 0)
 
     def approach_1(self, nums: List[int]) -> bool:
         '''
