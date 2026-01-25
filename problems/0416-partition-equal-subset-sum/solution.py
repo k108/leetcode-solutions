@@ -1,6 +1,41 @@
 class Solution:
     def canPartition(self, nums: List[int]) -> bool:
-        return self.approach_4(nums)
+        return self.approach_5(nums)
+
+    def approach_5(self, A: List[int]) -> bool:
+        '''
+        Time Complexity: O(N × target)
+        Space Complexity: O(N × target)
+        '''
+        '''
+        Approach:
+        Bottom-up DP
+        '''
+        total_sum = sum(A)
+        if not total_sum % 2 == 0:
+            return False
+        
+        target_sum = total_sum // 2
+
+        # Create DP table
+        # Rows: len(A) + 1 (0 elements → all elements)
+        # Cols: target + 1 (sum from 0 → target)
+        B = [[False] * (target_sum + 1) for _ in range(len(A) + 1)]
+
+        # Base case:
+        # With 0 elements, we can always make sum = 0
+        B[0][0] = True
+
+        for i in range(1, len(A) + 1):
+            for j in range(0, target_sum + 1):
+                if j - A[i - 1] >= 0:
+                    B[i][j] = B[i - 1][j - A[i - 1]] or B[i - 1][j]
+                else:
+                    B[i][j] = B[i - 1][j]
+
+        return B[len(A)][target_sum]
+
+
 
     def approach_4(self, nums: List[int]) -> bool:
         '''
