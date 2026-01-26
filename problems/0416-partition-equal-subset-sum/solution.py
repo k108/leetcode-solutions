@@ -4,12 +4,83 @@ class Solution:
 
     def approach_5(self, A: List[int]) -> bool:
         '''
-        Time Complexity: O(N × target)
-        Space Complexity: O(N × target)
+        Time Complexity: O(N * target)
+        Space Complexity: O(N * target)
         '''
         '''
         Approach:
-        Bottom-up DP
+        Bottom-up DP : Value-Based 0/1 - Knapsack
+
+        0/1 Knapsack Recurrence Relation =>
+
+        State Definition :
+        Let dp[i][w] = maximum value achievable using the first i items
+                    with knapsack capacity w
+
+        Base Case:
+        dp[0][w] = 0, for all w i.e. No items -> no value
+        dp[i][0] = 0 , for all i i.e. Zero capacity -> no value
+
+        Recurrence:
+        If weight[i-1] <= w:
+            dp[i][w] = max(
+                dp[i-1][w],                          # exclude item i
+                value[i-1] + dp[i-1][w - weight[i-1]]  # include item i
+            )
+        Else:
+            dp[i][w] = dp[i-1][w]                    # cannot include item i
+
+        Boundary Conditions:
+        0 <= i <= n
+        0 <= w <= capacity
+
+        Each DP state represents the best (or possible) outcome using a prefix of items 
+        and a fixed capacity, with the recurrence modeling the 
+        choice to include or exclude the current item.
+
+        We want to find subset of items that add up to target_sum
+        Given : 'n' items ~ Knapsack items
+        target_sum ~ target_sum capacity
+        Task : Combination that sums upto target_sum exists or not
+        But, for Knapsack, it is, Finding maximum value of Combination
+        So, we modify the formula,
+
+        dp[i][w] = dp[i-1][w] or dp[i-1][w-w_i]
+        here,
+        dp[i][w] -> If there is a combination out of first 'i' items, that sum upto 'w'
+        dp[i-1][w] -> If there is a combination out of first 'i-1' items, that sum upto 'w', 
+        and we ignore 'ith' item
+        dp[i-1][w-wi] -> If there is a combination out of first 'i-1' items, that sum upto 'w-w_i', 
+        and we include 'ith' item, i.e. by adding w_i, we get: (w-w_i) + w_i = w
+
+        if w-w_i < 0, we do not consider the case of including 'ith' item
+        dp[i-1][w-w_i]
+        so automatically,
+        dp[i][w] = dp[i-1][w]
+
+        Base case:
+        With 0 elements, we can always make sum = 0
+
+        Subset Sum (0/1 Knapsack Decision Version) Recurrence Relation =>
+        
+        State Definition :
+        dp[i][s] = True if we can form sum s using first i elements (i.e., nums[0] to nums[i-1])
+        
+        Base Case:
+        dp[0][0] = True; Using 0 elements, we can always form sum 0
+        dp[0][s>0] = False, for all s > 0; Using 0 elements, we cannot form any positive sum
+        
+        Recurrence:
+        If nums[i-1] <= s:
+            dp[i][s] = dp[i-1][s] or dp[i-1][s - nums[i-1]]
+            # exclude current element OR include it once
+        Else:
+            dp[i][s] = dp[i-1][s]
+            # cannot include current element since it exceeds sum s
+
+        Boundary Conditions:
+        0 <= i <= n            (number of elements)
+        0 <= s <= target_sum  (knapsack capacity / target subset sum)
         '''
         total_sum = sum(A)
         if not total_sum % 2 == 0:
@@ -18,24 +89,25 @@ class Solution:
         target_sum = total_sum // 2
 
         # Create DP table
-        # Rows: len(A) + 1 (0 elements → all elements)
-        # Cols: target + 1 (sum from 0 → target)
-        B = [[False] * (target_sum + 1) for _ in range(len(A) + 1)]
+        # Rows: len(A) + 1 (0 elements -> all elements)
+        # Cols: target + 1 (sum from 0 -> target)
+        dp = [[False] * (target_sum + 1) for _ in range(len(A) + 1)]
 
         # Base case:
         # With 0 elements, we can always make sum = 0
-        B[0][0] = True
+        dp[0][0] = True
 
+        # here i=0 bcz everything other column (sum) of this row
+        # cannot be created with 0 elements
         for i in range(1, len(A) + 1):
-            for j in range(0, target_sum + 1):
-                if j - A[i - 1] >= 0:
-                    B[i][j] = B[i - 1][j - A[i - 1]] or B[i - 1][j]
+            for w in range(0, target_sum + 1):
+                # We know that i-1 >=0 so we do not need extra check for that
+                if w - A[i - 1] >= 0:
+                    dp[i][w] = dp[i - 1][w - A[i - 1]] or dp[i - 1][w]
                 else:
-                    B[i][j] = B[i - 1][j]
+                    dp[i][w] = dp[i - 1][w]
 
-        return B[len(A)][target_sum]
-
-
+        return dp[len(A)][target_sum]
 
     def approach_4(self, nums: List[int]) -> bool:
         '''
