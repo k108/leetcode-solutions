@@ -1,6 +1,71 @@
 class Solution:
     def canPartition(self, nums: List[int]) -> bool:
-        return self.approach_5(nums)
+        return self.approach_7(nums)
+
+    def approach_7(self, A: List[int]) -> bool:
+        '''
+        Time Complexity: O(N * target)
+        Space Complexity: O(target)
+        '''
+        '''
+        To calculate dp[i][w], we only need the element above and an item before that,
+        so if we update elements from right to left, then we can use only 1 row
+        '''
+        total_sum = sum(A)
+        if not total_sum % 2 == 0:
+            return False
+        
+        target_sum = total_sum // 2
+        dp = [False] * (target_sum + 1)
+        dp[0] = True
+
+        # for num in A:
+        #     for w in range(target_sum, num - 1, -1):
+        #         dp[w] = dp[w] or dp[w - num]
+
+        for i in range(1, len(A) + 1):
+            # Start from right to left
+            for w in range(target_sum, A[i - 1] - 1, -1):
+                dp[w] = dp[w] or dp[w - A[i-1]]
+
+
+        return dp[target_sum]
+
+    def approach_6(self, A: List[int]) -> bool:
+        '''
+        Time Complexity: O(N * target)
+        Space Complexity: O(target)
+        '''
+        '''
+        Since recurrence only needs the prev row to calculate, dp[i][w],
+        we can just use 2 rows till the final result
+
+        dp[i] = curr_row
+        dp[i - 1] = prev_row
+        '''
+        total_sum = sum(A)
+        if not total_sum % 2 == 0:
+            return False
+        
+        target_sum = total_sum // 2
+
+        prev_row = [False]*(target_sum + 1)
+
+        # Base case
+        prev_row[0] = True
+
+        for i in range(1, len(A) + 1):
+            curr_row = [False]*(target_sum + 1)
+            for w in range(0, target_sum + 1):
+                # We know that i-1 >=0 so we do not need extra check for that
+                if w - A[i - 1] >= 0:
+                    curr_row[w] = prev_row[w - A[i - 1]] or prev_row[w]
+                else:
+                    curr_row[w] = prev_row[w]
+
+            prev_row = curr_row
+
+        return curr_row[target_sum]
 
     def approach_5(self, A: List[int]) -> bool:
         '''
