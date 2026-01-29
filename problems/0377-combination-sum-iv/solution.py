@@ -1,8 +1,43 @@
 class Solution:
     def combinationSum4(self, nums: List[int], target: int) -> int:
-        return self.approach_4(nums, target)
+        return self.approach_5(nums, target)
+
+    def approach_5(self, nums: List[int], target: int) -> int:
+        '''
+        Time Complexity : O(N * target), the outer loop runs target times, and for each iteration,
+        we potentially check all N numbers in nums
+
+        Space Complexity : O(target), The array dp will have target + 1 elements, 
+        each requiring constant space. 
+        So the overall space complexity is linear in terms of the target value.
+        '''
+        '''
+        Dynamic Programming : Top-Down (Memoization)
+        '''
+
+        dp = [-1]*(target + 1)
+        dp[0] = 1
+
+        def dfs(nums, target):
+            if dp[target] != -1:
+                return dp[target]
+            
+            result = 0
+
+            for i in range(len(nums)):
+                if target >= nums[i]:
+                    result += dfs(nums, target - nums[i])
+
+            dp[target] = result
+            return result
+
+        return dfs(nums, target)
 
     def approach_4(self, nums: List[int], target: int) -> int:
+        '''
+        Time Complexity: O(N * target)
+        Space Complexity: O(target)
+        '''
         @cache
         def dfs(t):
             if t == 0: return 1
@@ -19,7 +54,7 @@ class Solution:
         So the overall space complexity is linear in terms of the target value.
         '''
         '''
-        Dynamic Programming :
+        Dynamic Programming : Bottom-Up
 
         State Definition :
         dp(t) =  # combinatons that sum up to t
@@ -65,7 +100,7 @@ class Solution:
         Space Complexity : O(target)
         '''
         '''
-        Memoization
+        Top-Down : Memoization
         '''
         nums.sort()
         dp = {}
