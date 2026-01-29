@@ -1,6 +1,13 @@
 class Solution:
     def combinationSum4(self, nums: List[int], target: int) -> int:
-        return self.approach_3(nums, target)
+        return self.approach_4(nums, target)
+
+    def approach_4(self, nums: List[int], target: int) -> int:
+        @cache
+        def dfs(t):
+            if t == 0: return 1
+            return sum(dfs(t-x) for x in nums if x <= t)
+        return dfs(target)
 
     def approach_3(self, nums: List[int], target: int) -> int:
         '''
