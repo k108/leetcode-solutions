@@ -1,6 +1,47 @@
+import math
+
 class Solution:
     def numSquares(self, n: int) -> int:
-        return self.approach_4(n)
+        return self.approach_5(n)
+
+    def approach_5(self, n: int) -> int:
+        '''
+        Time Complexity = O(n^(1/2))
+        Space Complexity = O(1)
+        '''
+        '''
+        Approach :
+        Lagrange's four-square theorem :
+        Every positive integer can be written as the sum of at most four perfect squares.
+        That means the answer is always in {1, 2, 3, 4}.
+
+        Legendre's three-square theorem :
+        Use Legendre’s Three Square Theorem
+        A number cannot be written as the sum of three squares iff,
+        n = 4^k * ((8 * m) + 7)
+        '''
+
+        # Case 1: n is itself a perfect square => ans = 1
+        if int(math.isqrt(n)) ** 2 == n:
+            return 1
+
+        # Case 2: sum of two squares; n = a^2 + b^2 for some integers a, b
+        for i in range(1, int(math.isqrt(n)) + 1):
+            remainder = n - i * i
+            if int(math.isqrt(remainder)) ** 2 == remainder:
+                return 2
+
+        # Reduce n by removing factors of 4
+        temp = n
+        while temp % 4 == 0:
+            temp //= 4
+
+        # Case 3: Legendre's condition
+        if temp % 8 == 7:
+            return 4
+
+        # Case 4: must be 3
+        return 3
 
     def approach_4(self, n: int) -> int:
         '''
