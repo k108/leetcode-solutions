@@ -1,6 +1,71 @@
 class Solution:
     def numSquares(self, n: int) -> int:
-        return self.approach_2(n)
+        return self.approach_3(n)
+
+    def approach_3(self, n: int) -> int:
+        '''
+        Time Complexity = O(n * (n^1/2))
+        Space Complexity = O(n)
+        '''
+        '''
+        Approach : Iterative DP : Bottom-Up
+
+        Recurrence Relation :
+
+        State Definition :
+        dp(n) = minimum number of perfect squares that sum to n
+
+        Base case :
+        dp(0) = 0, minimum number of perfect squares that sum to zero = zero numbers
+
+        Recurrence :
+        dp(n) = 1 + min(dp(n - i^2)) for all i such that i^2 <= n
+
+        => dp(n) = 1 + min(dp(n - 1^2), dp(n - 2^2), dp(n - 3^2), dp(n - 4^2) ...)
+
+        dp[N] = answer
+
+        Intuition :
+        Choose one perfect square i^2
+        That choice contributes 1
+        The remaining sum is n - i^2
+        Solve the remainder optimally
+        Take the minimum over all valid squares
+
+        Boundary Condition :
+        dp(n) is defined only for n >= 0
+        not allowed => dp(n − i^2) when n−i^2 < 0
+        => 1 <= i^2 <= n
+
+        Table of Variables :
+        n = 12
+        dp = [0, float('inf'), float('inf'), float('inf'), float('inf'), float('inf'), float('inf'), float('inf'), float('inf'), float('inf'), float('inf'), float('inf'), float('inf')]
+
+        i = 1, we construct every number using perfect square '1' only
+        dp = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        (1+1+1+1+1 = 5, to get 5)
+
+        i = 2, perfect square = 4
+                          | start
+        dp = [0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 5, 3]
+        (5 = 4+1)
+
+        i = 3, perfect square = 9
+                                         | start
+        dp = [0, 1, 2, 3, 1, 2, 3, 4, 2, 1, 2, 3, 3]
+        (12 = 4+4+1 or 9+1+1+1)
+        '''
+        dp = [float('inf')] * (n + 1)
+        dp[0] = 0
+
+        for s in range(1, n + 1):
+            i = 1
+            while i * i <= s:
+                sq = i * i
+                dp[s] = min(dp[s], 1 + dp[s - sq])
+                i += 1
+
+        return dp[n]
 
     def approach_2(self, n: int) -> int:
         '''
@@ -8,8 +73,7 @@ class Solution:
         Space Complexity = O(n)
         '''
         '''
-        Approach : Memoization
-
+        Approach : Memoization : Top-Down
         '''
         dp = [-1] * (n + 1)
 
