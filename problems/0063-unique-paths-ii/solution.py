@@ -1,6 +1,30 @@
 class Solution:
     def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
-        return self.approach_3(obstacleGrid)
+        return self.approach_4(obstacleGrid)
+
+    def approach_4(self, obstacleGrid: List[List[int]]) -> int:
+        '''
+        Time Complexity : O(R * C)
+        Space Complexity : O(C)
+        '''
+        if not obstacleGrid or obstacleGrid[0][0] == 1:
+            return 0
+
+        R = len(obstacleGrid)
+        C = len(obstacleGrid[0])
+
+        dp = [0]*C
+        dp[0] = 1
+
+        for r in range(R):
+            for c in range(C):
+                if obstacleGrid[r][c] == 1:
+                    dp[c] = 0
+                else:
+                    if c > 0:
+                        dp[c] += dp[c - 1]
+
+        return dp[C - 1] 
 
     def approach_3(self, obstacleGrid: List[List[int]]) -> int:
         '''
@@ -79,7 +103,9 @@ class Solution:
         '''
         R = len(obstacleGrid)
         C = len(obstacleGrid[0])
+
         dp = [[0]*C for i in range(R)]
+
         def dfs(r, c, R, C):
             # reached right most corner or
             # reached bottom most corner and
@@ -103,8 +129,6 @@ class Solution:
             return dp[r][c]
 
         ans = dfs(0, 0, R, C)
-
-        print(dp)
 
         return ans
 
