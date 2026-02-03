@@ -1,20 +1,73 @@
 class Solution:
     def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
-        return self.approach_5(obstacleGrid)
+        return self.approach_6(obstacleGrid)
 
     def approach_6(self, obstacleGrid: List[List[int]]) -> int:
+        '''
+        Time Complexity : O(r * c)
+        Space Complexity : O(r * c)
+        '''
+        '''
+        Approach : 2D DP
+        
+        Recurrence Relation :
+
+        State Definition :
+        dp(r, c) = number of unique paths to reach cell (r, c)
+
+        Base case :
+
+        dp(0,0) = 0, if s[0][0] = 1
+        dp(0,0) = 1, if s[0][0] = 0
+
+        Recurrence :
+
+        dp[r][c] = 0, if s[r][c] = 1
+        dp[r][c] = dp[r - 1][c] + dp[r][c - 1], if s[r][c] = 0
+
+        Intuition :
+
+        From any cell (r, c):
+        We can only arrive from:
+        the top cell (r-1, c) or
+        the left cell (r, c-1)
+        If the current cell is an obstacle, no paths can go through it.
+        So the number of ways to reach (r, c) is simply:
+        the number of ways to reach the cell above + the number of ways to reach the cell to the left
+
+        Boundary Condition :
+
+        Start cell:
+        If obstacleGrid[0][0] == 1 → return 0
+        Else → dp[0][0] = 1
+
+        First row (r = 0):
+        A cell can only be reached from the left
+        If an obstacle appears, all cells to the right become unreachable
+
+        First column (c = 0):
+        A cell can only be reached from above
+        If an obstacle appears, all cells below become unreachable
+        In code, these boundary conditions are handled implicitly using
+
+        For r = 0 or c = 0, we can only come from one direction.
+        We handle this implicitly via,
+        if r > 0
+        if c > 0
+
+        '''
         R = len(obstacleGrid)
         C = len(obstacleGrid[0])
         
-        dp = [[0] * N for _ in range(M)]
+        dp = [[0] * C for _ in range(R)]
 
         if obstacleGrid[0][0] == 1:
             return 0
         
         dp[0][0] = 1
 
-        for r in range(M):
-            for c in range(N):
+        for r in range(R):
+            for c in range(C):
                 if obstacleGrid[r][c] == 1:
                     dp[r][c] = 0
                 else:
@@ -22,12 +75,15 @@ class Solution:
                         dp[r][c] += dp[r-1][c]
                     if c > 0:
                         dp[r][c] += dp[r][c-1]
-        return dp[M-1][N-1]
+        return dp[R-1][C-1]
 
     def approach_5(self, obstacleGrid: List[List[int]]) -> int:
         '''
         Time Complexity : O(r * c)
         Space Complexity : O(r * c) for cache & O(r + c) recursion stack
+        '''
+        '''
+        Approach : DFS + @cache / Memoization
         '''
         R = len(obstacleGrid)
         C = len(obstacleGrid[0])
@@ -48,6 +104,9 @@ class Solution:
         '''
         Time Complexity : O(R * C)
         Space Complexity : O(C)
+        '''
+        '''
+        Approach : 1D DP
         '''
         if not obstacleGrid or obstacleGrid[0][0] == 1:
             return 0
@@ -74,7 +133,7 @@ class Solution:
         Space Complexity : O(C)
         '''
         '''
-        Bottom-Up \ Iterative DP :-
+        Bottom-Up from Destination\ Iterative DP :-
         We just need to know the previous rows results
         We just need to know the previous column results
         Last row and last colum outside 
@@ -143,6 +202,9 @@ class Solution:
         Time Complexity : O(R * C)
         Space Complexity : O(R * C)
         '''
+        '''
+        Approach : DFS + Memo table / Top-down DP
+        '''
         R = len(obstacleGrid)
         C = len(obstacleGrid[0])
 
@@ -178,6 +240,9 @@ class Solution:
         '''
         Time Complexity : O(2 ^ (r + c))
         Space Complexity : O(r + c)
+        '''
+        '''
+        Approach : Recursion
         '''
         R = len(obstacleGrid)
         C = len(obstacleGrid[0])
