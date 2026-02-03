@@ -1,6 +1,48 @@
 class Solution:
     def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
-        return self.approach_4(obstacleGrid)
+        return self.approach_5(obstacleGrid)
+
+    def approach_6(self, obstacleGrid: List[List[int]]) -> int:
+        R = len(obstacleGrid)
+        C = len(obstacleGrid[0])
+        
+        dp = [[0] * N for _ in range(M)]
+
+        if obstacleGrid[0][0] == 1:
+            return 0
+        
+        dp[0][0] = 1
+
+        for r in range(M):
+            for c in range(N):
+                if obstacleGrid[r][c] == 1:
+                    dp[r][c] = 0
+                else:
+                    if r > 0:
+                        dp[r][c] += dp[r-1][c]
+                    if c > 0:
+                        dp[r][c] += dp[r][c-1]
+        return dp[M-1][N-1]
+
+    def approach_5(self, obstacleGrid: List[List[int]]) -> int:
+        '''
+        Time Complexity : O(r * c)
+        Space Complexity : O(r * c) for cache & O(r + c) recursion stack
+        '''
+        R = len(obstacleGrid)
+        C = len(obstacleGrid[0])
+
+        @cache
+        def dfs(r , c):
+            if r == R-1 and c == C-1 and obstacleGrid[r][c] == 0:
+                return 1
+
+            if r == R or c == C or obstacleGrid[r][c] != 0:
+                return 0
+
+            return dfs(r+1, c) + dfs(r, c+1)
+
+        return dfs(0,0)
 
     def approach_4(self, obstacleGrid: List[List[int]]) -> int:
         '''
