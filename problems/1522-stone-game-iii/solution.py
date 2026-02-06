@@ -1,6 +1,36 @@
 class Solution:
     def stoneGameIII(self, stoneValue: List[int]) -> str:
-        return self.approach_3(stoneValue)
+        return self.approach_4(stoneValue)
+
+    def approach_4(self, stoneValue):
+        '''
+        Time Complexity : O(N) 
+        Space Complexity : O(1)
+        '''
+        N = len(stoneValue)
+        # dp[N], dp[N+1], dp[N+2], dp[N+3] = 0
+        dp = [0] * 4
+
+        for i in range(N - 1, -1, -1):
+            # Take 1 stone
+            take = stoneValue[i] - dp[(i + 1) % 4]
+            
+            # Take 2 stones
+            if i + 1 < N:
+                take = max(take, stoneValue[i] + stoneValue[i + 1] - dp[(i + 2) % 4])
+            
+            # Take 3 stones
+            if i + 2 < N:
+                take = max(take, stoneValue[i] + stoneValue[i + 1] + stoneValue[i + 2] - dp[(i + 3) % 4])
+            
+            dp[i % 4] = take
+        
+        if dp[0] > 0:
+            return "Alice"
+        elif dp[0] < 0:
+            return "Bob"
+        else:
+            return "Tie"
 
     def approach_3(self, stoneValue):
         '''
