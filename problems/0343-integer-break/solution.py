@@ -1,6 +1,95 @@
 class Solution:
     def integerBreak(self, n: int) -> int:
-        return self.approach_3(n)
+        return self.approach_5(n)
+
+    def approach_5(self, n: int) -> int:
+        '''
+        Time Complexity : O(1)
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach: Maths
+
+        n = 3q+r,r ∈ {0,1,2}
+
+        The function f(x) = log(x) is concave -> equal splits maximize product
+        For integers, 3 is the closest integer to e ≈ 2.718
+        Hence:
+        We use as many 3s as possible
+        Except when a remainder of 1 appears -> convert to 2 × 2
+
+        Remainder 0 -> all 3s
+        Remainder 1 -> replace 3 + 1 with 2 + 2
+        Remainder 2 -> keep the 2
+        '''
+
+        # At least one split is required
+        if n <=3:
+            return n-1
+
+        q = n // 3
+        r = n % 3
+        
+        # Best split: all 3s
+        if r == 0:
+            # Case 1: r = 1:
+            return 3 ** q
+
+        # Avoid 3 + 1, use 2 + 2
+        # 10 -> 3 + 3 + 4 -> 3 * 3 * 4
+        # instead of 3 + 3 + 3 + 1 -> 3 * 3 * 3 * 1
+        # Multiplying by 1 never helps
+        elif r == 1:
+            # Case 2: r = 1:
+            return (3 ** (q - 1)) * 4
+        else:
+            # Case 3: r = 3:
+            # Best split: add one 2
+            # 8 -> 3 + 3 + 2 -> 18
+            # breaking 2 makes the product worse
+            # 2 = 1 + 1 -> 1 × 1 = 1
+            return (3 ** q) * 2
+
+    def approach_4(self, n: int) -> int:
+        '''
+        Time Complexity : O(n), loop runs ≈ n/3 times
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach: Greedy
+
+        i : 1;	1
+        i : 2;	Best split(s) : 1 + 1 -> 1×1
+        i : 3;	Best split(s) : 1 + 2 -> 1×2
+        i : 4;	Best split(s) : 2 + 2 -> 2×2
+        i : 5;	Best split(s) : 2 + 3 -> 2×3
+        i : 6;	Best split(s) : 3 + 3 -> 3×3
+        i : 7;	Best split(s) : 3 + 4 -> 3×4
+        i : 8;	Best split(s) : 3 + 3 + 2 -> 3×3×2
+        i : 9;	Best split(s) : 3 + 3 + 3 -> 3×3×3
+        i : 10;	Best split(s) : 3 + 3 + 4 -> 3×3×4
+
+        1, 2, 4, 6, 9, 12, 18, 27, 36
+
+        For any integer k ≥ 5:
+        3 × (k - 3) ≥ 2 × (k - 2)
+
+        Breaking into 3s gives the maximum product
+        Exception: avoid leaving 1 at the end -> convert 3 + 1 into 2 + 2
+        That’s exactly what while n > 4 condition enforces
+
+        The maximum product is obtained by breaking the number into as many 3s as possible, 
+        except when a remainder of 1 occurs, in which case we use 2×2 instead.
+        '''
+        if n <=3:
+            return n-1
+
+        result = 1
+        while n > 4:
+             result *= 3
+             n -= 3
+        
+        return result * n
 
     def approach_3(self, n: int) -> int:
         '''
