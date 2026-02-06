@@ -1,14 +1,86 @@
 class Solution:
     def stoneGameIII(self, stoneValue: List[int]) -> str:
-        return self.approach_2(stoneValue)
-    
+        return self.approach_3(stoneValue)
+
+    def approach_3(self, stoneValue):
+        '''
+        Time Complexity : O(N) 
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach : Bottom Up DP / Iterative DP
+
+        We only need last 3 results: dp[i+1], dp[i+2] and dp[i+3]
+        We depend on dp[i+1], dp[i+2], dp[i+3], hence we need a rolling buffer of size 4.
+
+        Recurrence Relation :
+
+        State Definition : 
+
+        dp(i) = Maximum score difference (current player − other player),
+        when starting from index i.
+
+        Base case :
+
+        dp[N] = 0, No stones left → no one scores anything
+
+        Recurrence :
+        From index 'i', the current player can take 1, 2, or 3 stones.
+
+        If they take k stones:
+
+        They gain: stoneValue[i] + ... + stoneValue[i + k - 1]
+
+        Then, the opponent plays optimally from i + k, gaining dp[i + k]
+
+        So the net advantage is:
+
+        (sum of taken stones) − dp[i + k]
+
+        dp[i] = max( sum(stoneValue[j]) - dp[i+k] ), k ∈ {1, 2, 3}, i+k <= N, j ∈ [i, i+k-1]
+
+        dp[i] = max(
+                    stoneValue[i] - dp[i + 1],
+                    stoneValue[i] + stoneValue[i+1] - dp[i + 2],
+                    stoneValue[i] + stoneValue[i+1] + stoneValue[i+2] - dp[i + 3],
+                )
+
+        Intuition :
+
+        Boundary Condition :
+
+        DP state Table :
+	
+        '''
+        N = len(stoneValue)
+        # dp[i % 4] represents dp[i]
+        dp = [0] * 4
+        
+        for i in range(N-1, -1, -1):
+            dp[i % 4] = float('-inf')
+            take = 0
+
+            for j in range(i, min(i + 3, N)):
+                take += stoneValue[j]
+                dp[i % 4] = max(
+                    dp[i % 4], 
+                    take - dp[(j + 1) % 4]
+                )
+        
+        if dp[0] > 0:
+            return "Alice"
+        elif dp[0] < 0:
+            return "Bob"
+        else:
+            return "Tie"
+
     def approach_2(self, stoneValue):
         '''
         Time Complexity : O(N) 
         Space Complexity : O(N), stack space
         '''
         '''
-        Approach : DFS with Memoization
+        Approach : DFS with Memoization / Top Down DP
 
         minimax(i) : Maximum score difference (current player − other player) starting at index 'i'
 
