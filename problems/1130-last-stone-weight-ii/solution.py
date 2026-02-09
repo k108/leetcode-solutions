@@ -1,6 +1,26 @@
 class Solution:
     def lastStoneWeightII(self, stones: List[int]) -> int:
-        return self.approach_4(stones)
+        return self.approach_5(stones)
+
+    def approach_5(self, stones: List[int]) -> int:
+        '''
+        Time Complexity : O(N * total_sum)
+        Space Complexity : O(total_sum)
+        '''
+        '''
+        Approach : Iterative 1D-DP
+        '''
+        total_sum = sum(stones)
+        dp = [False] * (total_sum + 1)
+        dp[0] = True
+
+        for stone in stones:
+            for j in range(total_sum, stone - 1, -1):
+                dp[j] = dp[j] or dp[j - stone]
+
+        for s in range(total_sum // 2, -1, -1):
+            if dp[s]:
+                return total_sum - 2 * s
 
     def approach_4(self, stones: List[int]) -> int:
         '''
