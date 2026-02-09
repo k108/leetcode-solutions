@@ -1,6 +1,38 @@
 class Solution:
     def lastStoneWeightII(self, stones: List[int]) -> int:
-        return self.approach_3(stones)
+        return self.approach_4(stones)
+
+    def approach_4(self, stones: List[int]) -> int:
+        '''
+        Time Complexity : O(N * total_sum)
+        Space Complexity : O(N * total_sum)
+        '''
+        '''
+        Approach : Iterative DP
+
+        Minimum subset sum difference problem
+        '''
+        N = len(stones)
+        total_sum = sum(stones)
+
+        dp = [[False] * (total_sum + 1) for _ in range(N + 1)]
+
+        # Base case
+        for i in range(N + 1):
+            dp[i][0] = True
+
+        # DP transition
+        for i in range(1, N + 1):
+            for j in range(total_sum + 1):
+                if stones[i - 1] <= j:
+                    dp[i][j] = dp[i - 1][j] or dp[i - 1][j - stones[i - 1]]
+                else:
+                    dp[i][j] = dp[i - 1][j]
+
+        # Find closest sum to total_sum // 2
+        for s in range(total_sum // 2, -1, -1):
+            if dp[N][s]:
+                return total_sum - 2 * s
 
     def approach_3(self, stones: List[int]) -> int:
         '''
