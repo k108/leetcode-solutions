@@ -8,6 +8,58 @@ class Solution:
         Space Complexity : O(total_sum)
         '''
         '''
+        Approach : Difference-based Dynamic Programming using a set
+
+        Recurrence Relation :
+
+        State Definition :
+        dp = set of all achievable differences
+        after processing the current prefix of stones
+        unq = {stones[0]}
+        means:
+        After processing the first stone, the only possible difference is stones[0].
+
+        Base Case :
+        dp = {stones[0]}
+        (Equivalent to starting with {0} and processing the first stone.)
+
+        Recurrence :
+        For each stone s:
+        dp_new = { |d + s|, |d − s|  for all d ∈ dp }
+
+        tmp.add(abs(u + s))
+        tmp.add(abs(u - s))
+
+        Intuition :
+        At any point 'd' represents the difference between two piles
+        Adding a new stone s can:
+        increase the difference -> d + s
+        reduce / cancel part of the difference -> |d − s|
+        We keep all reachable differences, and the smallest one at the end is optimal.
+
+        Boundary Condition :
+        Differences are always non-negative
+        Maximum difference ≤ total sum of stones
+        Set size is bounded by O(S)
+        '''
+        unique_differences = {stones[0]}
+
+        for s in stones[1:]:
+            tmp = set()
+            for ud in unique_differences:
+                tmp.add(abs(ud + s))
+                tmp.add(abs(ud - s))
+
+            unique_differences = tmp
+
+        return min(unique_differences)
+
+    def approach_7(self, stones: List[int]) -> int:
+        '''
+        Time Complexity : O(N * total_sum)
+        Space Complexity : O(total_sum)
+        '''
+        '''
         Approach : Set-based difference DP
 
         Track all possible differences after each stone using:
