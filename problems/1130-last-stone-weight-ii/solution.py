@@ -1,6 +1,6 @@
 class Solution:
     def lastStoneWeightII(self, stones: List[int]) -> int:
-        return self.approach_6(stones)
+        return self.approach_7(stones)
 
     def approach_7(self, stones: List[int]) -> int:
         '''
