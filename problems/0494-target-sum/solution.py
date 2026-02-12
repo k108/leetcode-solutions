@@ -1,6 +1,66 @@
 class Solution:
     def findTargetSumWays(self, nums: List[int], target: int) -> int:
-        return self.approach_2(nums, target)
+        return self.approach_3(nums, target)
+
+    def approach_3(self, nums: List[int], target: int) -> int:
+        '''
+        Time Complexity : O(N * S)
+        Space Complexity : O(N * S)
+        '''
+        '''
+        Approach : Iterative 2-D DP / Bottom - Up
+        '''
+        '''
+        Recurrence Relation :
+
+        State Definition :
+
+        dp[i][s]=number of ways to obtain sum s using the first i+1 elements
+        Where:
+        i∈[0,n−1]
+        s∈[−T,T]
+        T= ∑nums[k], for k=0 to n−1
+
+        Base Case :
+
+        For the first element nums[0]:
+
+        dp[0][nums[0]]+=1
+        dp[0][−nums[0]]+=1
+
+        If nums[0]=0, this correctly results in:
+        
+        dp[0][0]=2
+
+        (because +0 and −0 are distinct choices)
+
+        Recurrence :
+
+        dp[i][s] = dp[i−1][s−nums[i]] + dp[i−1][s+nums[i]], For i ≥ 1
+
+        '''
+        total_sum = sum(nums)
+        dp = [[0] * (2 * total_sum + 1) for _ in range(len(nums))]
+
+        # Initialize the first row of the DP table
+        dp[0][nums[0] + total_sum] = 1
+        dp[0][-nums[0] + total_sum] += 1
+
+        for index in range(1, len(nums)):
+            for sum_val in range(-total_sum, total_sum + 1):
+                if dp[index - 1][sum_val + total_sum] > 0:
+                    dp[index][sum_val + nums[index] + total_sum] += dp[
+                        index - 1
+                    ][sum_val + total_sum]
+                    dp[index][sum_val - nums[index] + total_sum] += dp[
+                        index - 1
+                    ][sum_val + total_sum]
+
+        return (
+            0
+            if abs(target) > total_sum
+            else dp[len(nums) - 1][target + total_sum]
+        )
 
     def approach_2(self, nums: List[int], target: int) -> int:
         '''
