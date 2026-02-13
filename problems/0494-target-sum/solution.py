@@ -1,6 +1,57 @@
 class Solution:
     def findTargetSumWays(self, nums: List[int], target: int) -> int:
-        return self.approach_4(nums, target)
+        return self.approach_5(nums, target)
+
+    def approach_5(self, nums: List[int], target: int) -> int:
+        '''
+        Time Complexity : O(N * S)
+        Space Complexity : O(S)
+        '''
+        '''
+        Approach : 1D Knapsack / Bottom Up
+
+        Each row in the 2D DP table only depends on the previous row.
+        Once we have calculated the values for dp[index - 1], 
+        we no longer need the values from dp[index - 2] or any earlier rows. 
+        Thus, instead of maintaining a full 2D table, 
+        we update a single array as we process each number in the list.
+
+        For i = 1,
+        dp[nums[i] + total_sum] = 1
+        dp[-nums[i] + total_sum] = 1
+
+        For each subsequent number, we create a new array and update it based on the previous array.
+        This avoids the need to store the entire 2D table. For each possible sum, 
+        we update the new array by adding the number of ways to reach that sum 
+        by either adding or subtracting the current number.
+
+        If the previous sum was 0 (i.e., dp[0 + totalSum] = 1), we can reach a sum of 1 
+        by adding the current number (0 + 1 = 1) or a sum of -1 
+        by subtracting the current number (0 - 1 = -1).
+
+        dp[target + totalSum] -> Answer
+        '''
+        total_sum = sum(nums)
+        dp = [0] * (2 * total_sum + 1)
+
+        # Initialize the first row of the DP table
+        dp[nums[0] + total_sum] = 1  # Adding nums[0]
+        dp[-nums[0] + total_sum] += 1  # Subtracting nums[0]
+
+        for index in range(1, len(nums)):
+            next_dp = [0] * (2 * total_sum + 1)
+            for sum_val in range(-total_sum, total_sum + 1):
+                if dp[sum_val + total_sum] > 0:
+                    next_dp[sum_val + nums[index] + total_sum] += dp[
+                        sum_val + total_sum
+                    ]
+                    next_dp[sum_val - nums[index] + total_sum] += dp[
+                        sum_val + total_sum
+                    ]
+            dp = next_dp
+
+        # Return the result if the target is within the valid range
+        return 0 if abs(target) > total_sum else dp[target + total_sum]
 
     def approach_4(self, nums: List[int], target: int) -> int:
         '''
@@ -8,7 +59,7 @@ class Solution:
         Space Complexity : O(S)
         '''
         '''
-        Approach : Subset Sum DP / 1D Knapsack Counting
+        Approach : Subset Sum DP / 1D Knapsack Counting / Top Down
 
         Original Problem : sum(+-nums[i]) - target
 
