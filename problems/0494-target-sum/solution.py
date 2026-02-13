@@ -1,6 +1,82 @@
 class Solution:
     def findTargetSumWays(self, nums: List[int], target: int) -> int:
-        return self.approach_3(nums, target)
+        return self.approach_4(nums, target)
+
+    def approach_4(self, nums: List[int], target: int) -> int:
+        '''
+        Time Complexity : O(N * S)
+        Space Complexity : O(S)
+        '''
+        '''
+        Approach : Subset Sum DP / 1D Knapsack Counting
+
+        Original Problem : sum(+-nums[i]) - target
+
+        Let:
+        P = numbers assigned +
+        N = numbers assigned -
+
+        Then: 
+        sum(P) - sum(N) = target
+        sum(P) + sum(N) = total_sum
+        => 2P = target + total_sum
+        P = (target + total_sum) / 2
+
+        Therefore, count subsets whose sum = (target + total_sum) / 2
+
+        If abs(target) > total_sum -> return 0
+        If (target + total_sum) is odd -> return 0
+        (because S must be integer)
+
+        Intitition :
+        Choosing which elements are positive automatically determines which are negative.
+        So counting sign assignments
+        = counting subsets P with required sum.
+
+        Recurrence Relation :
+
+        State Definition :
+        dp[i][s]=number of ways to obtain sum s using first i elements 
+        Where:
+        i∈[0,n]
+        s∈[0,S]
+
+        Base Case :
+        dp[0][0] = 1(There is exactly 1 way to make sum 0 using 0 elements — choose nothing.)
+
+        dp[0][s] = 0 for s>0
+
+        Recurrence :
+
+        For i >= 1:
+        If nums[i−1] <= s:
+        dp[i][s] = dp[i−1][s] ( Do not take element nums[i−1] )
+                    + dp[i−1][s − nums[i−1]] ( Take element nums[i−1] )
+        Else:
+        dp[i][s] = dp[i−1][s]
+
+        dp[N][S] -> Answer
+
+        '''
+        total_sum = sum(nums)
+
+        if abs(target) > total_sum:
+            return 0
+        if (target + total_sum) % 2 != 0:
+            return 0
+
+        subset_sum = (target + total_sum) // 2
+
+        # dp[s] = number of ways to make sum s
+        dp = [0] * (subset_sum + 1)
+        dp[0] = 1 # one way to make sum 0 (empty subset)
+
+        for num in nums: 
+            # iterate backwards (0/1 knapsack style) 
+            for s in range(subset_sum, num - 1, -1): 
+                dp[s] += dp[s - num]
+
+        return dp[subset_sum]
 
     def approach_3(self, nums: List[int], target: int) -> int:
         '''
