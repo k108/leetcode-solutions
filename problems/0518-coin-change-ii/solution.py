@@ -4,15 +4,18 @@ class Solution:
 
     def approach_2(self, amount: int, coins: List[int]) -> int:
         '''
-        Time Complexity : O(2^amount)
-        Space Complexity : O(amount)
+        Time Complexity : O(amount * len(coins))
+        Space Complexity : O(amount * len(coins))
         '''
         '''
-        Unbounded Knapsack :
+        Unbounded Knapsack and Memoization :
         profit = 1
         weight = denomination
         capacity = amount
         '''
+        N = len(coins)
+        dp = [[-1] * (amount + 1) for _ in range(N)]
+
         @cache
         def dfs(i, amount):
             if amount == 0:
@@ -22,6 +25,9 @@ class Solution:
             if i == len(coins):
                 return 0
 
+            if dp[i][amount] != -1:
+                return dp[i][amount]
+
             # Skip item i
             ways = dfs(i + 1, amount)
 
@@ -29,6 +35,8 @@ class Solution:
             new_amount = amount - coins[i]
             if new_amount >= 0:
                 ways += dfs(i, new_amount)
+
+            dp[i][amount] = ways
 
             return ways
         
