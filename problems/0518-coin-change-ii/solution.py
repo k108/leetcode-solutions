@@ -1,6 +1,51 @@
 class Solution:
     def change(self, amount: int, coins: List[int]) -> int:
-        return self.approach_4(amount, coins)
+        return self.approach_5(amount, coins)
+
+    def approach_5(self, amount: int, coins: List[int]) -> int:
+        '''
+        Time Complexity : O(amount * len(coins))
+        Space Complexity : O(amount)
+        '''
+        '''
+        Unbounded Knapsack and Bottom-Up 1D DP :
+
+        We don't actually need 'i' dimension if we process coins one by one.
+        When processing coin c, we are allowing:
+        Ways that use coin c any number of times,
+        but only after all smaller-index coins are already fixed.
+        So combinations are built in lexicographic coin order.
+        That prevents permutation double counting.
+
+        For combinations (not permutations):
+
+        Outer loop = coins
+        Inner loop = amount increasing
+
+        This ensures:
+        Each combination counted once
+        Order doesn't matter
+        If reversed -> we count permutations.
+
+        Recurrence Relation :
+
+        State :
+        f(A) = number of ways to make amount A
+
+        Base Case:
+        f(0) = 1
+
+        Recurrence :
+        Then for each coin:
+        f(A) += f(A−c), for all A >= c
+        '''
+        dp = [0] * (amount + 1)
+        dp[0] = 1
+
+        for c in coins:
+            for i in range(c, amount + 1):
+                dp[i] = dp[i] + dp[i - c]
+        return dp[amount]
 
     def approach_4(self, amount: int, coins: List[int]) -> int:
         '''
@@ -8,15 +53,28 @@ class Solution:
         Space Complexity : O(amount * len(coins))
         '''
         '''
-        Unbounded Knapsack and Memoization :
+        Unbounded Knapsack and Bottom-Up 2D DP :
         profit = 1
         weight = denomination
         capacity = amount
 
         Recurrence Relation :
 
+        State :
+        f(i,A) = number of ways to make amount A using coins from index i -> N-1
+
+        Base Case :
+        f(i,0) = 1
+        f(i,A) = 0, if A < 0
+        f(N,A) = 0, if A > 0
+
         Recurrence :
         dp(i, A) = dp(i + 1, A) + dp(i, A − coins[i]​)
+
+        i + 1 -> depends on larger index -> iterate i backward
+        A - coin[i] -> depends on smaller index -> iterate A forward
+
+        answer = f(0, A) # All coins available and Full amount
         '''
         N = len(coins)
         dp = [[0] * (amount + 1) for _ in range(N + 1)]
@@ -102,8 +160,8 @@ class Solution:
         capacity = amount
         '''
         N = len(coins)
-        dp = [[-1] * (amount + 1) for _ in range(N)]
 
+        @cache
         def dfs(i, amount):
             if amount == 0:
                 return 1
@@ -112,9 +170,6 @@ class Solution:
             if i == len(coins):
                 return 0
 
-            if dp[i][amount] != -1:
-                return dp[i][amount]
-
             # Skip item i
             ways = dfs(i + 1, amount)
 
@@ -122,8 +177,6 @@ class Solution:
             new_amount = amount - coins[i]
             if new_amount >= 0:
                 ways += dfs(i, new_amount)
-
-            dp[i][amount] = ways
 
             return ways
         
