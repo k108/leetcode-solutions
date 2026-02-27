@@ -1,6 +1,60 @@
 class Solution:
     def mincostTickets(self, days: List[int], costs: List[int]) -> int:
-        return self.approach_3(days, costs)
+        return self.approach_4(days, costs)
+
+    def approach_4(self, days: List[int], costs: List[int]) -> int:
+        '''
+        Time Complexity : O(n), where n = 365
+        Space Complexity : O(n), where n = 365
+        '''
+        '''
+        Appoach : Prefix DP / Bottom-Up DP
+
+        What is the minimum cost to reach today?
+
+        State : 
+        
+        dp(i) = Minimum price to cover all travel days from day 1 to day i
+
+        Base case:
+
+        dp(0) = 0
+
+        Recurrence :
+
+        For each day i ∈ [1,365],
+
+        If day 'i' is a travel day:
+
+        dp(i) = min({ 
+				oneDayPass + dp(max(0, i−1)),
+				oneWeekPass + dp(max(0, i−7)),
+				oneMonthPass + dp(max(0, i−30)) 
+			})
+
+        If not a travel day:
+
+        dp(i) = dp(i-1)
+
+        Answer : dp(365)
+
+        '''
+        days = set(days)
+        
+        dp = [0] * 366
+        # dp[i] = min cost to cover up to day i
+        
+        for i in range(1, 366):
+            if i not in days:
+                dp[i] = dp[i - 1]
+            else:
+                dp[i] = min(
+                    dp[i - 1] + costs[0],
+                    dp[max(0, i - 7)] + costs[1],
+                    dp[max(0, i - 30)] + costs[2],
+                )
+        
+        return dp[365]
 
     def approach_3(self, days: List[int], costs: List[int]) -> int:
         '''
@@ -52,7 +106,7 @@ class Solution:
         f(i) = min({ 
 				oneDayPass + exceptToday,
 				oneWeekPass + expectThisWeek,
-				oneMonthPass, expectThisMonth 
+				oneMonthPass + expectThisMonth 
 			})
 
         If not a travel day:
@@ -101,6 +155,8 @@ class Solution:
         Weight : costs
         Profit : minimum cost
 
+        What is the cost from today to future?
+
         State : 
         
         f(i) = Minimum price for the i to 365 of the days
@@ -112,7 +168,7 @@ class Solution:
         f(i) = min({ 
 				oneDayPass + exceptToday,
 				oneWeekPass + expectThisWeek,
-				oneMonthPass, expectThisMonth 
+				oneMonthPass + expectThisMonth 
 			})
 
         If not a travel day:
