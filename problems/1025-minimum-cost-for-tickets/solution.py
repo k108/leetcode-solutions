@@ -1,6 +1,40 @@
 class Solution:
     def mincostTickets(self, days: List[int], costs: List[int]) -> int:
-        return self.approach_4(days, costs)
+        return self.approach_5(days, costs)
+
+    def approach_5(self, days: List[int], costs: List[int]) -> int:
+        '''
+        Time Complexity : O(D), where where D = last travel day
+        Space Complexity : O(30) = O(1)
+        '''
+        '''
+        Appoach : Prefix DP / Bottom-Up DP
+        
+        Since we only look 30 days back,
+        we can just store the cost for last 30 days in a rolling array.
+
+        Also we can only look at calendar days,
+        within our first and last travel dates.
+        '''
+        start = days[0]
+        end = days[-1]
+
+        days = set(days)
+
+        # dp[i] = min cost to cover up to day i
+        dp = [0] * 30
+        
+        for i in range(start, end + 1):
+            if i not in days:
+                dp[i % 30] = dp[(i - 1) % 30]
+            else:
+                dp[i % 30] = min(
+                    dp[(i - 1) % 30] + costs[0],
+                    dp[(max(0, i - 7)) % 30] + costs[1],
+                    dp[(max(0, i - 30)) % 30] + costs[2],
+                )
+        
+        return dp[end % 30]
 
     def approach_4(self, days: List[int], costs: List[int]) -> int:
         '''
@@ -40,9 +74,9 @@ class Solution:
 
         '''
         days = set(days)
-        
-        dp = [0] * 366
+
         # dp[i] = min cost to cover up to day i
+        dp = [0] * 366
         
         for i in range(1, 366):
             if i not in days:
