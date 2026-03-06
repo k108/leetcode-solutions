@@ -1,6 +1,31 @@
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        return self.approach_2(prices)
+        return self.approach_3(prices)
+
+    def approach_3(self, prices: List[int]) -> int:
+        '''
+        Time Complexity : O(N)
+        Space Complexity : O(N)
+        '''
+        '''
+        Approach : Iterative DP
+        '''
+        dp = [[0] * 2 for _ in range(len(prices) + 2)]
+
+        for day in range(len(prices) - 1, -1, -1):
+            for buy in [False, True]:
+                # no transaction this day
+                ans_1 = dp[day+1][buy]
+
+                # doing the required transaction this day
+                if buy:
+                    ans_2 = -prices[day] + dp[day+1][False]
+                else:
+                    ans_2 = prices[day] + dp[day+2][True]
+
+                dp[day][buy] = max(ans_1, ans_2)
+
+        return dp[0][True]
 
     def approach_2(self, prices: List[int]) -> int:
         '''
