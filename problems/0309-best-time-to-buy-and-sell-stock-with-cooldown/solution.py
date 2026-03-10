@@ -1,6 +1,6 @@
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        return self.approach_4(prices)
+        return self.approach_3(prices)
 
     def approach_4(self, prices: List[int]) -> int:
         '''
@@ -53,17 +53,31 @@ class Solution:
         dp = [[0] * 2 for _ in range(len(prices) + 2)]
 
         for day in range(len(prices) - 1, -1, -1):
-            for buy in [False, True]:
-                # no transaction this day
-                ans_1 = dp[day+1][buy]
+            # dp[day][True]
+            curr_buy = max(
+                        dp[day+1][True],           # skip
+                        -prices[day] + dp[day+1][False]   # buy today
+                    )
+            # dp[day][False]
+            curr_sell = max(
+                        dp[day+1][False],          # hold
+                        prices[day] + dp[day+2][True]     # sell today
+                    )
 
-                # doing the required transaction this day
-                if buy:
-                    ans_2 = -prices[day] + dp[day+1][False]
-                else:
-                    ans_2 = prices[day] + dp[day+2][True]
+            dp[day][True]  = curr_buy
+            dp[day][False] = curr_sell
 
-                dp[day][buy] = max(ans_1, ans_2)
+            # for buy in [False, True]:
+            #     # no transaction this day
+            #     ans_1 = dp[day+1][buy]
+
+            #     # doing the required transaction this day
+            #     if buy:
+            #         ans_2 = -prices[day] + dp[day+1][False]
+            #     else:
+            #         ans_2 = prices[day] + dp[day+2][True]
+
+            #     dp[day][buy] = max(ans_1, ans_2)
 
         return dp[0][True]
 
