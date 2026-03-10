@@ -1,6 +1,46 @@
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        return self.approach_3(prices)
+        return self.approach_4(prices)
+
+    def approach_4(self, prices: List[int]) -> int:
+        '''
+        Time Complexity : O(N)
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach : Iterative 1D-DP
+
+        For each day, we only need,
+
+        dp[day+1][True]	next day's buy state
+        dp[day+1][False] next day's sell state
+        dp[day+2][True] buy state after cooldown
+
+        next_buy = dp[day+1][True]
+        next_sell = dp[day+1][False]
+        cooldown_buy = dp[day+2][True]
+        '''
+
+        # base case
+        # beyond the last day profit is 0
+        next_buy  = 0
+        next_sell = 0
+        cooldown_buy = 0
+
+        for day in range(len(prices) - 1, -1, -1):
+            # dp[day+1][buy] -> next_buy, next_sell
+            
+            # compute current buy state
+            curr_buy = max(next_buy, -prices[day] + next_sell)
+
+            # compute current sell state
+            curr_sell = max(next_sell, prices[day] + cooldown_buy)
+
+            cooldown_buy = next_buy
+            next_buy = curr_buy
+            next_sell = curr_sell
+
+        return next_buy
 
     def approach_3(self, prices: List[int]) -> int:
         '''
@@ -8,7 +48,7 @@ class Solution:
         Space Complexity : O(N)
         '''
         '''
-        Approach : Iterative DP
+        Approach : Iterative 2D-DP
         '''
         dp = [[0] * 2 for _ in range(len(prices) + 2)]
 
