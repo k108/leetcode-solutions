@@ -1,6 +1,62 @@
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        return self.approach_3(prices)
+        return self.approach_5(prices)
+
+    def approach_5(self, prices: List[int]) -> int:
+        '''
+        Time Complexity : O(N)
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach : State Machine
+
+        Day i: sell
+        Day i+1: rest (cooldown)
+        Day i+2: buy allowed
+
+        States:
+        Hold -> currently own a stock
+        Sold -> sold a stock today
+        Rest -> post cooldown
+
+        REST -> HOLD  (buy stock)
+        HOLD -> SOLD  (sell stock)
+        SOLD -> REST  (cooldown)
+        REST -> REST  (do nothing)
+        HOLD -> HOLD  (keep holding)
+
+        State Definitions:
+
+        hold[i] = max profit on day i while holding stock
+        sold[i] = max profit on day i after selling today
+        rest[i] = max profit on day i doing nothing without stock
+
+        State Transitions:
+
+        hold[i] = max(hold[i-1], rest[i-1] - prices[i])
+        sold[i] = hold[i-1] + prices[i]
+        rest[i] = max(rest[i-1],sold[i-1])
+
+        At day = 0,
+        hold = -prices[0]
+        sold = 0
+        rest = 0
+
+        Answer : max(sold, rest)
+        '''
+
+        hold = -prices[0]
+        sold = 0
+        rest = 0
+
+        for i in range(len(prices)):
+            prev_sold = sold
+            
+            hold = max(hold, rest - prices[i])
+            sold = hold + prices[i]
+            rest = max(rest, prev_sold)
+
+        return max(sold, rest)
 
     def approach_4(self, prices: List[int]) -> int:
         '''
