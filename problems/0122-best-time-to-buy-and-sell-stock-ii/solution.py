@@ -1,6 +1,76 @@
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        return self.approach_2(prices)
+        return self.approach_4(prices)
+
+    def approach_4(self, prices: List[int]) -> int:
+        '''
+        Time Complexity : O(N)
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach : Iterative 1D-DP
+
+        For each day, we only need,
+
+        dp[day+1][False]	next day's buy state
+        dp[day+1][True] next day's sell state
+
+        next_buy = dp[day+1][False]
+        next_sell = dp[day+1][True]
+        '''
+
+        # base case
+        # beyond the last day profit is 0
+        next_buy  = 0
+        next_sell = 0
+
+        for day in range(len(prices) - 1, -1, -1):
+            # dp[day+1][holding] -> next_buy, next_sell
+
+            # sell
+            curr_sell = max(
+                next_sell, # skip
+                prices[day] + next_buy # buy
+            )
+
+            # buy
+            curr_buy = max(
+                next_buy, # skip
+                -prices[day] + next_sell  # sell
+            )
+
+            next_buy = curr_buy
+            next_sell = curr_sell
+
+        return next_buy
+
+    def approach_3(self, prices: List[int]) -> int:
+        '''
+        Time Complexity : O(N)
+        Space Complexity : O(N)
+        '''
+        '''
+        Approach : Iterative 2D-DP
+        '''
+
+        dp = [[0] * 2 for _ in range(len(prices) + 2)]
+
+        for day in range(len(prices) - 1, -1, -1):
+            for holding in [False, True]:
+                # no transaction this day
+                ans_1 = dp[day+1][holding]
+
+                # doing the required transaction this day
+                if holding:
+                    # sell
+                    ans_2 = prices[day] + dp[day+1][False]
+                else:
+                    # buy
+                    ans_2 = -prices[day] + dp[day+1][True]
+                
+                dp[day][holding] = max(ans_1, ans_2)
+
+        return dp[0][False]
 
     def approach_2(self, prices: List[int]) -> int:
         '''
