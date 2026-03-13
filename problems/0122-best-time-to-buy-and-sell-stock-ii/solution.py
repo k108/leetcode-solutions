@@ -1,6 +1,21 @@
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        return self.approach_4(prices)
+        return self.approach_5(prices)
+
+    def approach_5(self, prices: List[int]) -> int:
+        '''
+        Time Complexity : O(N)
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach : Greedy
+        '''
+        profit = 0
+        for i in range(1, len(prices)):
+            if prices[i] > prices[i - 1]:
+                profit += prices[i] - prices[i-1]
+        
+        return profit
 
     def approach_4(self, prices: List[int]) -> int:
         '''
