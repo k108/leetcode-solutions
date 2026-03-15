@@ -1,6 +1,50 @@
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        return self.approach_1(prices)
+        return self.approach_2(prices)
+
+    def approach_2(self, prices: List[int]) -> int:
+        '''
+        Time Complexity : O(N)
+        Space Complexity : O(N)
+        '''
+        '''
+        Approach : Bottom Up DP / Tabulation
+
+        State :
+        dp[i][k][0]
+
+        Maximum profit:
+        starting at day i
+        k transactions remaining
+        not holding stock
+        
+        dp[i][k][1]
+
+        Maximum profit:
+        starting at day i
+        k transactions remaining
+        holding stock
+        '''
+
+        # int[][][] dp = new int[n + 1][3][2]
+        dp = [[[0]*2 for _ in range(3)] for _ in range(len(prices)+1)]
+
+        for i in range(len(prices)-1, -1, -1):
+            for k in range(1, 3):
+
+                # buy
+                dp[i][k][0] = max(
+                    -prices[i] + dp[i+1][k][1],
+                    dp[i+1][k][0]
+                )
+
+                # sell
+                dp[i][k][1] = max(
+                    prices[i] + dp[i+1][k-1][0],
+                    dp[i+1][k][1]
+                )
+
+        return dp[0][2][0]
 
     def approach_1(self, prices: List[int]) -> int:
         '''
@@ -9,6 +53,8 @@ class Solution:
         '''
         '''
         Approach : DFS with memoization
+
+        Buy -> hold -> Sell -> transaction completed
         '''
 
         @cache
