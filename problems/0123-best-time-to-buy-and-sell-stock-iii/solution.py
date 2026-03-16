@@ -1,6 +1,54 @@
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        return self.approach_3(prices)
+        return self.approach_4(prices)
+
+    def approach_4(self, prices: List[int]) -> int:
+        '''
+        Time Complexity : O(N)
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach : State Machine
+
+        One transaction = one buy + one sell
+        
+        Buy1 -> Sell1 -> Buy2 -> Sell2
+
+        There are only four meaningful states the system can be in.
+
+        Buy1 -> Maximum profit after performing first buy
+        profit = -price
+        we want the cheapest first buy price
+
+        Sell1 -> Maximum profit after performing first sell
+        profit = previous_profit + price
+        We want to sell at the highest price after the best buy
+
+        Buy2 -> Maximum profit after performing 2nd buy
+        effective_cost = price - profit_from_first_sell
+        second buy is effectively discounted by the first profit.
+
+        Sell2 -> Maximum profit after performing 2nd sell
+        profit = second_buy_profit + price
+
+        we only keep the best achievable states so far
+        '''
+        # We can't sell stocks on the first day,
+        # sell action will be initialized with 0
+        buy1 = -prices[0]
+        sell1 = 0
+        buy2 = -prices[0]
+        sell2 = 0
+
+        for i in range(1, len(prices)):
+            price = prices[i]
+
+            buy1 = max(buy1, -price)
+            sell1 = max(sell1, buy1 + price)
+            buy2 = max(buy2, sell1 - price)
+            sell2 = max(sell2, buy2 + price)
+        
+        return sell2
 
     def approach_3(self, prices: List[int]) -> int:
         '''
