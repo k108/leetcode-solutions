@@ -1,6 +1,48 @@
 class Solution:
     def maxProfit(self, prices: List[int], fee: int) -> int:
-        return self.approach_2(prices, fee)
+        return self.approach_3(prices, fee)
+
+    def approach_3(self, prices: List[int], fee: int) -> int:
+        '''
+        Time Complexity : O(N)
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach : Greedy
+
+        Every increasing price difference contributes to profit, 
+        and collecting all of them is always optimal.
+
+        profit maximization <-> cost minimization
+
+        Only sell when price > minimum + fee
+        After paying the fee, is this trade still profitable?
+
+        Track cheapest buy
+        Sell when profitable after fee
+        Reset effective buy price to avoid double counting
+
+        price rises -> wait
+        price rises enough -> sell
+        continue rising -> extend same transaction
+        price drops -> reset minimum
+        '''
+        profit = 0
+        minimum = prices[0]
+
+        for i in range(1, len(prices)):
+            # buy at minimum price
+            if prices[i] < minimum:
+                minimum = prices[i]
+
+            # sell and buy at minimum price
+            # we treat the next buy as if it happened at (price - fee)
+            # future_price - (price - fee) = (future_price - price) + fee
+            elif prices[i] > minimum + fee:
+                profit += prices[i] - fee - minimum
+                minimum = prices[i] - fee
+
+        return profit
 
     def approach_2(self, prices: List[int], fee: int) -> int:
         '''
