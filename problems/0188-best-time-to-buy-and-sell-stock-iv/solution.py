@@ -1,11 +1,63 @@
 class Solution:
     def maxProfit(self, k: int, prices: List[int]) -> int:
-        return self.approach_2(k, prices)
+        return self.approach_3(k, prices)
+
+    def approach_3(self, k: int, prices: List[int]) -> int:
+        '''
+        Time Complexity : O(N * K)
+        Space Complexity : O(K)
+        '''
+        '''
+        Approach : 1-D DP
+
+        curr = dp[i]
+        next = dp[i+1]
+
+        State :
+
+        next[k][0] ->
+
+        Maximum profit starting from the next day when:
+        k transactions left
+        not holding stock
+
+        next[k][1] ->
+
+        Maximum profit starting from the next day when:
+        k transactions left
+        holding stock
+        '''
+
+        # int[][][] dp = new int[k+1][2]
+        next = [[0]*2 for _ in range(k+1)]
+
+        for i in range(len(prices)-1, -1, -1):
+            curr = [[0]*2 for _ in range(k+1)]
+            for t in range(1, k+1):
+
+                # buy
+                curr[t][0] = max(
+                    -prices[i] + next[t][1], # buy
+                    next[t][0] # skip
+                )
+
+                # sell
+                curr[t][1] = max(
+                    prices[i] + next[t-1][0], # sell
+                    next[t][1] # skip
+                )
+
+            next = curr
+        
+        # start at day 0
+        # 2 transactions available
+        # not holding stock
+        return next[k][0]
 
     def approach_2(self, k: int, prices: List[int]) -> int:
         '''
-        Time Complexity : O(N)
-        Space Complexity : O(N)
+        Time Complexity : O(N * K)
+        Space Complexity : O(N * K)
         '''
         '''
         Approach : Bottom Up DP / Tabulation
@@ -48,8 +100,8 @@ class Solution:
 
     def approach_1(self, k: int, prices: List[int]) -> int:
         '''
-        Time Complexity : O(N)
-        Space Complexity : O(N)
+        Time Complexity : O(N * K)
+        Space Complexity : O(N * K)
         '''
         '''
         Approach : DFS with memoization
