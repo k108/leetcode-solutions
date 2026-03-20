@@ -28,6 +28,13 @@ class Solution:
         holding stock
         '''
 
+        if k >= len(prices) // 2:
+            profit = 0
+            for i in range(1, len(prices)):
+                if prices[i] > prices[i-1]:
+                    profit += prices[i] - prices[i-1]
+            return profit
+
         # int[][][] dp = new int[k+1][2]
         next = [[0]*2 for _ in range(k+1)]
 
@@ -77,6 +84,12 @@ class Solution:
         k transactions remaining
         holding stock
         '''
+        if k >= len(prices) // 2:
+            profit = 0
+            for i in range(1, len(prices)):
+                if prices[i] > prices[i-1]:
+                    profit += prices[i] - prices[i-1]
+            return profit
 
         # int[][][] dp = new int[n + 1][k+1][2]
         dp = [[[0]*2 for _ in range(k+1)] for _ in range(len(prices)+1)]
@@ -108,6 +121,12 @@ class Solution:
 
         Buy -> hold -> Sell -> transaction completed
         '''
+        if k >= len(prices) // 2:
+            profit = 0
+            for i in range(1, len(prices)):
+                if prices[i] > prices[i-1]:
+                    profit += prices[i] - prices[i-1]
+            return profit
 
         @cache
         def dfs(day, holding, num_transactions):
