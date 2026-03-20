@@ -1,6 +1,60 @@
 class Solution:
     def maxProfit(self, prices: List[int], fee: int) -> int:
-        return self.approach_1(prices, fee)
+        return self.approach_2(prices, fee)
+
+    def approach_2(self, prices: List[int], fee: int) -> int:
+        '''
+        Time Complexity : O(N)
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach : State Machine
+
+        State :
+        NOT_HOLD -> we do not own stock (can buy)
+        HOLD -> we own stock (can sell)
+
+        State Transitions :
+        NOT_HOLD -> HOLD      (buy stock)
+        NOT_HOLD -> NOT_HOLD  (do nothing)
+        HOLD -> NOT_HOLD      (sell stock)
+        HOLD -> HOLD          (keep holding)
+
+        State Definitions :
+        hold[i] = max profit on day i while holding stock
+        not_hold[i] = max profit on day i while not holding stock
+
+        hold[i] = max(
+            hold[i-1],             # keep holding
+            not_hold[i-1] - price  # buy today
+            )
+
+        not_hold[i] = max(
+            not_hold[i-1],         # do nothing
+            hold[i-1] + price - fee      # sell today
+            )
+        
+        Initial State :
+        hold = -prices[0] ( can only buy )
+        not_hold = 0
+        '''
+
+        hold = -prices[0]
+        not_hold = 0
+
+        for i in range(1, len(prices)):
+            prev_hold = hold
+            hold = max(
+                hold,             # keep holding
+                not_hold - prices[i]  # buy today
+                )
+
+            not_hold = max(
+                not_hold,         # do nothing
+                prev_hold + prices[i] - fee      # sell today
+                )
+        
+        return not_hold
 
     def approach_1(self, prices: List[int], fee: int) -> int:
         '''
