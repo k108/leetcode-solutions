@@ -1,6 +1,31 @@
 class Solution:
     def maxProfit(self, k: int, prices: List[int]) -> int:
-        return self.approach_3(k, prices)
+        return self.approach_4(k, prices)
+
+    def approach_4(self, k: int, prices: List[int]) -> int:
+        '''
+        Time Complexity : O(N * K)
+        Space Complexity : O(K)
+        '''
+        '''
+        buy[k] -> The cheapest way to enter the k-th transaction?
+        sell[k] -> The best profit after finishing k transactions?
+
+        buy[k] -> effective cost = actual price - previous profit
+        '''
+        buy = [float('inf')] * (k + 1)
+        sell = [0] * (k + 1)
+
+        for price in prices:
+            for i in range(1, k + 1):
+                # We buy the i-th stock, subtracting the profit from the prev (i-1) one
+                # ( do_nothing, actual_price - previous_profit )
+                buy[i] = min(buy[i], price - sell[i-1])
+                # We sell the i-th share 
+                # ( existing_best_profit, selling_price - effective_buy_cost )
+                sell[i] = max(sell[i], price - buy[i])
+
+        return sell[-1]
 
     def approach_3(self, k: int, prices: List[int]) -> int:
         '''
