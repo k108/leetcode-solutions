@@ -5,10 +5,14 @@ class Solution:
     def approach_3(self, s1: str, s2: str, s3: str) -> bool:
         '''
         Time Complexity : O(len(s1) * len(s2))
-        Space Complexity : O(len(s2))
+        Space Complexity : O(min(len(s1), len(s2)))
         '''
         '''
         Approach : Bottom-Up DP - 1D DP
+
+        We only require the information from the cells dp[i - 1][j] and 
+        dp[i][j - 1], i.e. the cell above the current row and the cell 
+        to the left of the current column.
 
         Collapse 2D to 1D
 
@@ -20,19 +24,34 @@ class Solution:
         dp[j] -> old value -> dp[i-1][j]
         dp[j-1] -> new value -> dp[i][j-1]
 
+        State :
+        dp[j] = whether s1[:i] and s2[:j] can form s3[:i+j]
+
+        Recurrence :
+
+        For each i >= 1, j >= 1:
+
+        dp[j] =
+            (dp[j]     AND s1[i-1] == s3[i+j-1])   <- from UP (old dp[j])
+        OR (dp[j-1]   AND s2[j-1] == s3[i+j-1])   <- from LEFT (new dp[j-1])
+
         '''
         if len(s1) + len(s2) != len(s3):
             return False
 
+        if len(s2) > len(s1):
+            s1, s2 = s2, s1
+
         dp = [False] * (len(s2) + 1)
 
         dp[0] = True
-
+        
+        # First row
         for j in range(1, len(s2) + 1):
             dp[j] = dp[j-1] and s2[j-1] == s3[j-1]
 
         for i in range(1, len(s1)+1):
-
+            # First column (for each i)
             dp[0] = dp[0] and s1[i-1] == s3[i-1]
 
             for j in range(1, len(s2)+1):
