@@ -1,6 +1,63 @@
 class Solution:
     def isInterleave(self, s1: str, s2: str, s3: str) -> bool:
-        return self.approach_1(s1, s2, s3)
+        return self.approach_2(s1, s2, s3)
+
+    def approach_3(self, s1: str, s2: str, s3: str) -> bool:
+        '''
+        Time Complexity : O(len(s1) * len(s2))
+        Space Complexity : O(len(s1) * len(s2))
+        '''
+        '''
+        Approach : Bottom-Up DP - 1D DP
+        '''
+        pass
+
+    def approach_2(self, s1: str, s2: str, s3: str) -> bool:
+        '''
+        Time Complexity : O(len(s1) * len(s2))
+        Space Complexity : O(len(s1) * len(s2))
+        '''
+        '''
+        Approach : Bottom-Up 2D DP
+        '''
+        if len(s1) + len(s2) != len(s3):
+            return False
+
+        dp = [[False]*(len(s2)+1) for _ in range(len(s1)+1)]
+
+        dp[0][0] = True
+
+        # Can the first i characters of s1 
+        # alone form the first i characters of s3?
+        # First i-1 chars of s1 already matched s3
+        # The next character must also match
+        # Previous prefix is valid AND current character matches
+        for i in range(1, len(s1) + 1):
+            dp[i][0] = dp[i-1][0] and s1[i-1] == s3[i-1]
+
+        # Can the first j characters of s2 
+        # alone form the first j characters of s3?
+        # First j-1 chars of s2 already matched s3
+        # The next character must also match
+        # Previous prefix is valid AND current character matches
+        for j in range(1, len(s2) + 1):
+            dp[0][j] = dp[0][j-1] and s2[j-1] == s3[j-1]
+
+        for i in range(1, len(s1)+1):
+            for j in range(1, len(s2)+1):
+
+                ans1 = False
+                ans2 = False
+
+                if s3[i+j-1] == s1[i-1]:
+                    ans1 = dp[i-1][j]
+
+                if s3[i+j-1] == s2[j-1]:
+                    ans2 = dp[i][j-1]
+
+                dp[i][j] = ans1 or ans2
+
+        return dp[len(s1)][len(s2)]
 
     def approach_1(self, s1: str, s2: str, s3: str) -> bool:
         '''
