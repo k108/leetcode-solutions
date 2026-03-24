@@ -16,8 +16,10 @@ class Solution:
         '''
         dp = [[0]*len(piles) for _ in range(len(piles))]
 
-        for l in range(len(piles)):
-            for r in range(len(piles)-1, -1, -1):
+        for length in range(1, len(piles)+1):
+            for l in range(len(piles) - length + 1):
+                r = l + length - 1
+
                 if l == r:
                     dp[l][r] = piles[l]
                 else:
@@ -31,7 +33,7 @@ class Solution:
 
                     dp[l][r] = max(choose_left, choose_right)
 
-            return dp[0][len(piles) - 1] > 0
+        return dp[0][len(piles) - 1] > 0
 
     def approach_1(self, piles: List[int]) -> bool:
         '''
