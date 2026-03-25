@@ -1,6 +1,6 @@
 class Solution:
     def stoneGame(self, piles: List[int]) -> bool:
-        return self.approach_4(piles)
+        return self.approach_2(piles)
 
     def approach_4(self, piles: List[int]) -> bool:
         '''
@@ -69,9 +69,8 @@ class Solution:
         '''
         dp = [[0]*len(piles) for _ in range(len(piles))]
 
-        for length in range(1, len(piles)+1):
-            for l in range(len(piles) - length + 1):
-                r = l + length - 1
+        for l in range(len(piles)-1, -1, -1):
+            for r in range(l, len(piles)):
 
                 if l == r:
                     dp[l][r] = piles[l]
