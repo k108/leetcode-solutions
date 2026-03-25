@@ -1,6 +1,40 @@
 class Solution:
     def stoneGame(self, piles: List[int]) -> bool:
-        return self.approach_2(piles)
+        return self.approach_3(piles)
+
+    def approach_3(self, piles: List[int]) -> bool:
+        '''
+        Time Complexity : O(n^2)
+        Space Complexity : O(n)
+        '''
+        '''
+        Approach : Minimax + 1D DP
+
+        dp[l][r] depends on:
+        dp[l+1][r]   (next row, same column)
+        dp[l][r-1]   (same row, previous column)
+
+        State :
+        dp[r] = represents dp[l][r] for current l
+
+        dp[r] -> dp[l+1][r]   (old value, from previous l)
+        dp[r-1] -> dp[l][r-1]   (already updated in current l loop)
+
+        Reuse dp[r] as the next row and dp[r-1] as the current row 
+        by updating from left to right while moving l backward.
+        '''
+        dp = [0]*len(piles)
+
+        for l in range(len(piles)-1, -1, -1):
+            for r in range(l, len(piles)):
+                if l == r:
+                    dp[r] = piles[l]
+                else:
+                    dp[r] = max(
+                                piles[l] - dp[r],        # dp[l+1][r]
+                                piles[r] - dp[r-1]       # dp[l][r-1]
+                            )
+        return dp[len(piles) - 1] > 0
 
     def approach_2(self, piles: List[int]) -> bool:
         '''
