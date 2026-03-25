@@ -1,6 +1,25 @@
 class Solution:
     def stoneGame(self, piles: List[int]) -> bool:
-        return self.approach_3(piles)
+        return self.approach_4(piles)
+
+    def approach_4(self, piles: List[int]) -> bool:
+        '''
+        Time Complexity : O(1)
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach : Mathematical
+
+        There are an even number of piles
+        The total number of stones across all the piles is odd
+
+        Let 1, 3, 5, 7, etc. odd piles are white, and 
+        the 2, 4, 6, 8, etc. even piles are black. 
+        Alice (first player) can always take either all white piles or
+        all black piles, and one of the colors must have a sum 
+        number of stones larger than the other color.
+        '''
+        return True
 
     def approach_3(self, piles: List[int]) -> bool:
         '''
