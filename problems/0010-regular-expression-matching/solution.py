@@ -1,6 +1,50 @@
 class Solution:
     def isMatch(self, s: str, p: str) -> bool:
-        return self.approach_1(s, p)
+        return self.approach_2(s, p)
+
+    def approach_2(self, s: str, p: str) -> bool:
+        '''
+        Time Complexity : O(len(s) * len(p))
+        Space Complexity : O(len(s) * len(p))
+        '''
+        '''
+        Approach : Iterative DP
+        '''
+        n, m = len(s), len(p)
+
+        # dp[i][j] = does s[0:i] match p[0:j]
+        dp = [[False] * (m + 1) for _ in range(n + 1)]
+
+        # Base case
+        dp[0][0] = True
+
+        # Initialize first row (empty string vs pattern)
+        for j in range(2, m + 1):
+            if p[j - 1] == '*':
+                dp[0][j] = dp[0][j - 2]
+
+        # Fill the DP table
+        for i in range(1, n + 1):
+            for j in range(1, m + 1):
+
+                # Case 1: normal char or '.'
+                if p[j - 1] != '*':
+                    dp[i][j] = (
+                        dp[i - 1][j - 1] and
+                        (s[i - 1] == p[j - 1] or p[j - 1] == '.')
+                    )
+
+                # Case 2: '*'
+                else:
+                    dp[i][j] = (
+                        dp[i][j - 2] or
+                        (
+                            (s[i - 1] == p[j - 2] or p[j - 2] == '.') and
+                            dp[i - 1][j]
+                        )
+                    )
+
+        return dp[n][m]
 
     def approach_1(self, s: str, p: str) -> bool:
         '''
