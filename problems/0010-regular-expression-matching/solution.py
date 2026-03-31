@@ -1,6 +1,77 @@
 class Solution:
     def isMatch(self, s: str, p: str) -> bool:
-        return self.approach_2(s, p)
+        return self.approach_3(s, p)
+
+    def approach_3(self, s: str, p: str) -> bool:
+        '''
+        Time Complexity : O(len(s) * len(p))
+        Space Complexity : O(len(p))
+        '''
+        '''
+        Approach : 1D - DP
+
+        prev[j] = dp[i-1][j]
+        curr[j] = dp[i][j]
+
+        Fix i ( let i be a constant ), vary j,
+
+        Substitute into recurrence,
+
+        Normal case :
+        dp(i, j) = dp(i-1, j-1)
+        Becomes:
+        curr(j) = prev(j-1)
+
+        * case :
+        dp(i, j) = dp(i, j-2) OR dp(i-1, j)
+        Becomes:
+        curr(j) = curr(j-2) OR prev(j)
+
+        dp(i-1, j) -> prev(j)
+        dp(i-1, j-1) -> prev(j-1)
+        dp(i, j-2) -> curr(j-2)
+        
+        '''
+        n, m = len(s), len(p)
+
+        prev = [False] * (m + 1)
+
+        # Base case
+        prev[0] = True
+
+        # Initialize first row (empty string vs pattern)
+        for j in range(2, m + 1):
+            if p[j - 1] == '*':
+                prev[j] = prev[j - 2]
+
+        # Fill the DP table
+        for i in range(1, n + 1):
+            # reset
+            curr = [False] * (m + 1)
+            curr[0] = False
+
+            for j in range(1, m + 1):
+
+                # Case 1: normal char or '.'
+                if p[j - 1] != '*':
+                    curr[j] = (
+                        prev[j - 1] and
+                        (s[i - 1] == p[j - 1] or p[j - 1] == '.')
+                    )
+
+                # Case 2: '*'
+                else:
+                    curr[j] = (
+                        curr[j - 2] or
+                        (
+                            (s[i - 1] == p[j - 2] or p[j - 2] == '.') and
+                            prev[j]
+                        )
+                    )
+
+            prev = curr
+
+        return prev[m]
 
     def approach_2(self, s: str, p: str) -> bool:
         '''
