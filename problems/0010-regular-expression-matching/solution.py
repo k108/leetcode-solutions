@@ -1,6 +1,35 @@
 class Solution:
     def isMatch(self, s: str, p: str) -> bool:
-        return self.approach_4(s, p)
+        return self.approach_5(s, p)
+
+    def approach_5(self, s: str, p: str) -> bool:
+        '''
+        Time Complexity : O(len(s) * len(p))
+        Space Complexity : O(len(s) * len(p))
+        '''
+        '''
+        Approach : Suffix / Forward Iterative DP
+        '''
+
+        dp = [[False] * (len(p) + 1) for _ in range(len(s)+1)]
+        dp[-1][-1] = True
+
+        for i in range(len(s), -1, -1):
+            for j in range(len(p) - 1, -1, -1):
+                first_match = (
+                    i < len(s) and 
+                    p[j] in {s[i], '.'}
+                )
+
+                if j + 1 < len(p) and p[j+1] == '*':
+                    dp[i][j] = (
+                        dp[i][j+2] or
+                        (first_match and dp[i+1][j])
+                    )
+                else:
+                    dp[i][j] = first_match and dp[i+1][j+1]
+
+        return dp[0][0]
 
     def approach_4(self, s: str, p: str) -> bool:
         '''
