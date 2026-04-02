@@ -1,6 +1,63 @@
 class Solution:
     def isMatch(self, s: str, p: str) -> bool:
-        return self.approach_3(s, p)
+        return self.approach_4(s, p)
+
+    def approach_4(self, s: str, p: str) -> bool:
+        '''
+        Time Complexity : O(len(s) * len(p))
+        Space Complexity : O(len(s) * len(p))
+        '''
+        '''
+        Approach : DP + Memoization
+
+        Recurrence Relation :
+
+        State :
+        f(i, j) = does text[i:] match pattern[j:] ?
+        suffix-based
+
+        Base Case :
+        f(i, j) = True    if j == m AND i == n
+        f(i, j) = False   if j == m AND i < n
+
+        i.e. If pattern is exhausted, string must also be exhausted
+
+        Recurrence :
+
+        f(i, j) =   {
+                        if j == m:
+                            return (i == n)
+
+                        first_match = (i < n) AND (text[i] == pattern[j] OR pattern[j] == '.')
+
+                        if j+1 < m AND pattern[j+1] == '*':
+                            return f(i, j+2) OR (first_match AND f(i+1, j))
+
+                        else:
+                            return first_match AND f(i+1, j+1)
+                    }
+
+        f(0, 0) -> Answer
+        '''
+        @cache
+        def dfs(i, j):
+            if j == len(p):
+                return i == len(s)
+
+            first_match = (
+                i < len(s) and 
+                p[j] in {s[i], '.'}
+            )
+
+            if j + 1 < len(p) and p[j+1] == '*':
+                return (
+                    dfs(i, j+2) or
+                    (first_match and dfs(i+1, j))
+                )
+            else:
+                return first_match and dfs(i+1, j+1)
+
+        return dfs(0, 0)
 
     def approach_3(self, s: str, p: str) -> bool:
         '''
@@ -151,6 +208,7 @@ class Solution:
 
         State :
         dp[i][j] = does s[0:i] match p[0:j] i.e. prefix match
+        prefix-based
 
         Base Case :
         dp[0][0] = True
