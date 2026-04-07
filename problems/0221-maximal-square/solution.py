@@ -1,6 +1,31 @@
 class Solution:
     def maximalSquare(self, matrix: List[List[str]]) -> int:
-        return self.approach_3(matrix)
+        return self.approach_4(matrix)
+
+    def approach_4(self, matrix: List[List[str]]) -> int:
+        '''
+        Time Complexity : O(R*C)
+        Space Complexity : O(R*C)
+        '''
+        '''
+        f(i, j) = largest square starting at (i, j)
+
+        We can define f(i, j) either as square ending at (i,j) or square starting at (i,j);
+        both lead to valid DP with reversed traversal.
+        '''
+        R = len(matrix)
+        C = len(matrix[0])
+
+        dp = [[0 for _ in range(C+1)] for _ in range(R+1)]
+        max_len = 0
+        
+        for r in range(R-1, -1, -1):
+            for c in range(C-1, -1, -1):
+                if matrix[r][c] == "1":
+                    dp[r][c] = 1 + min(dp[r][c+1], dp[r+1][c], dp[r+1][c+1])
+                    max_len = max(max_len, dp[r][c])
+
+        return max_len ** 2
 
     def approach_3(self, matrix: List[List[str]]) -> int:
         '''
