@@ -1,6 +1,30 @@
 class Solution:
     def countSquares(self, matrix: List[List[int]]) -> int:
-        return self.approach_1(matrix)
+        return self.approach_2(matrix)
+
+    def approach_2(self, matrix: List[List[str]]) -> int:
+        '''
+        Time Complexity : O(R*C)
+        Space Complexity : O(R*C)
+        '''
+        '''
+        Approach : Bottom-up Iterative DP
+        '''
+        R = len(matrix)
+        C = len(matrix[0])
+
+        dp = [[0] * (C + 1) for _ in range(R + 1)]
+
+        count_all_1_square = 0
+
+        for r in range(R):
+            for c in range(C):
+                if matrix[r][c]:
+                    dp[r + 1][c + 1] = (
+                        min(dp[r][c + 1], dp[r + 1][c], dp[r][c]) + 1
+                    )
+                    count_all_1_square += dp[r + 1][c + 1]
+        return count_all_1_square
 
     def approach_1(self, matrix: List[List[str]]) -> int:
         '''
@@ -8,6 +32,8 @@ class Solution:
         Space Complexity : O(R*C)
         '''
         '''
+        Approach : DFS + Memoization
+
         Pick any cell with value 1
         Can we build square matrix of all 1's ending here? (anywhere in the matrix)
 
