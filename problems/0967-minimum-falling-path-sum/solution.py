@@ -16,8 +16,10 @@ class Solution:
         for r in range(1, R):
             for c in range(C):
                 matrix[r][c] += min(
-                    matrix[r-1][k] for k in (c - 1, c, c + 1) if 0 <= k < R
-                    )
+                    matrix[r-1][c-1] if c > 0 else float('inf'),
+                    matrix[r-1][c],
+                    matrix[r-1][c+1] if c < C-1 else float('inf')
+                )
         
         return min(matrix[-1])
 
