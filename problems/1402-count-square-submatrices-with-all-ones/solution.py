@@ -1,6 +1,54 @@
 class Solution:
     def countSquares(self, matrix: List[List[int]]) -> int:
-        return self.approach_2(matrix)
+        return self.approach_3(matrix)
+
+    def approach_3(self, matrix: List[List[str]]) -> int:
+        '''
+        Time Complexity : O(R*C)
+        Space Complexity : O(C)
+        '''
+        '''
+        Approach : 1D DP
+
+        Let 'r' be constant,
+
+        dp[r][c] -> dp[c]
+        dp[r][c-1] -> dp[c-1]
+        dp[r-1][c] -> dp[c]
+        dp[r-1][c-1] -> prev_diag, as dp[c-1] diagonal is lost unless, we store it.
+        
+        dp[c-1] has already been overwritten to represent current row
+        '''
+
+        R = len(matrix)
+        C = len(matrix[0])
+        
+        dp = [0] * (C + 1)
+
+        count_all_1_square = 0
+        prev_diag = 0
+
+        for r in range(1, R+1):
+            prev_diag = 0
+            for c in range(1, C+1):
+                temp = dp[c]
+
+                if matrix[r-1][c-1]:
+
+                    dp[c] = min(
+                        dp[c-1],   # left
+                        dp[c],     # top
+                        prev_diag  # diag
+                    ) + 1
+
+                    count_all_1_square += dp[c]
+                else:
+                    dp[c] = 0
+
+                prev_diag = temp
+        
+        return count_all_1_square
+
 
     def approach_2(self, matrix: List[List[str]]) -> int:
         '''
