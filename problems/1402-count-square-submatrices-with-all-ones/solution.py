@@ -1,6 +1,36 @@
 class Solution:
     def countSquares(self, matrix: List[List[int]]) -> int:
-        return self.approach_3(matrix)
+        return self.approach_4(matrix)
+
+    def approach_4(self, matrix: List[List[str]]) -> int:
+        '''
+        Time Complexity : O(R*C)
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach : In-place DP
+
+        Instead of a separate dp, reuse matrix.
+        Overwrite matrix[i][j] with DP value.
+        '''
+        R = len(matrix)
+        C = len(matrix[0])
+
+        count_all_1_square = 0
+
+        for r in range(R):
+            for c in range(C):
+
+                if matrix[r][c] > 0 and r > 0 and c > 0:
+                    matrix[r][c] = min(
+                        matrix[r-1][c],
+                        matrix[r][c-1],
+                        matrix[r-1][c-1]
+                    ) + 1
+
+                count_all_1_square += matrix[r][c]
+
+        return count_all_1_square
 
     def approach_3(self, matrix: List[List[str]]) -> int:
         '''
