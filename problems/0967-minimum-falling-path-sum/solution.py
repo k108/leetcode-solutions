@@ -1,6 +1,25 @@
 class Solution:
     def minFallingPathSum(self, matrix: List[List[int]]) -> int:
-        return self.approach_1(matrix)
+        return self.approach_2(matrix)
+
+    def approach_2(self, matrix: List[List[int]]) -> int:
+        '''
+        Time Complexity : O(R*C)
+        Space Complexity : O(1)
+        '''
+        '''
+        Approach : Iterative DP
+        '''
+
+        R, C = len(matrix), len(matrix[0])
+
+        for r in range(1, R):
+            for c in range(C):
+                matrix[r][c] += min(
+                    matrix[r-1][k] for k in (c - 1, c, c + 1) if 0 <= k < R
+                    )
+        
+        return min(matrix[-1])
 
     def approach_1(self, matrix: List[List[int]]) -> int:
         '''
